@@ -1,9 +1,11 @@
 import React, { useState, useCallback } from 'react'
-import AudioProcessor from './pages/AudioProcessor'
-import { toast, Toaster } from 'sonner'
-import ListUploads from './pages/ListUploads'
 import axios from 'axios'
+import { toast, Toaster } from 'sonner'
+import AudioProcessor from './pages/AudioProcessor'
+import ListUploads from './pages/ListUploads'
+import AudioGenerator from './pages/AudioGenerator'
 import { AudioUpload } from './types'
+import Logo from './components/Logo'
 
 function App() {
   const [uploads, setUploads] = useState<AudioUpload[]>([])
@@ -19,8 +21,10 @@ function App() {
 
   return (
     <>
+      <div className='mt-20'></div>
       <Toaster position='top-right' />
       <AudioProcessor getList={getList} />
+      <AudioGenerator getList={getList} />
       <ListUploads uploads={uploads} getList={getList} />
     </>
   )

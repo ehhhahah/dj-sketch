@@ -1,9 +1,13 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { toast } from 'sonner'
 import { ListUploadsProps } from '../types'
+import { MdExpandMore, MdExpandLess } from 'react-icons/md'
+import { motion } from 'framer-motion'
 
 const ListUploads: React.FC<ListUploadsProps> = ({ uploads, getList }) => {
+  const [expanded, setExpanded] = useState<boolean>(false)
+
   useEffect(() => {
     getList()
   }, [getList])
@@ -24,10 +28,15 @@ const ListUploads: React.FC<ListUploadsProps> = ({ uploads, getList }) => {
 
   return (
     <div className='container'>
-      <div className='text-center'>
+      <div className='menu-header' onClick={() => setExpanded(!expanded)}>
         <h1 className='section-title'>List of Uploads</h1>
+        <button className='text-lg'>{expanded ? <MdExpandLess /> : <MdExpandMore />}</button>
       </div>
-      <div className='space-y-4'>
+      <motion.div
+        initial={{ height: 0, opacity: 0 }}
+        animate={{ height: expanded ? 'auto' : 0, opacity: expanded ? 1 : 0 }}
+        transition={{ duration: 0.8, ease: 'easeInOut' }}
+        className='overflow-hidden'>
         <div className='space-y-4'>
           {uploads &&
             uploads.map((item, index) => (
@@ -46,13 +55,8 @@ const ListUploads: React.FC<ListUploadsProps> = ({ uploads, getList }) => {
                 </button>
               </div>
             ))}
-          {uploads.length === 0 && (
-            <div className='text-center'>
-              <p className='text-muted'>No uploads available</p>
-            </div>
-          )}
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }

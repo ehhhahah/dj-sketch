@@ -2,8 +2,12 @@ import React, { useState } from 'react'
 import { FaUpload as Upload, FaMusic as Music } from 'react-icons/fa'
 import { toast } from 'sonner'
 import { AudioProcessorProps } from '../types'
+import { MdExpandMore, MdExpandLess } from 'react-icons/md'
+import { motion } from 'framer-motion'
+import ServerButton from '../components/ServerButton'
 
 const AudioProcessor: React.FC<AudioProcessorProps> = ({ getList }) => {
+  const [expanded, setExpanded] = useState<boolean>(false)
   const [file, setFile] = useState(null)
   const [processing, setProcessing] = useState(false)
   const [result, setResult] = useState(null)
@@ -52,38 +56,48 @@ const AudioProcessor: React.FC<AudioProcessorProps> = ({ getList }) => {
 
   return (
     <div className='container'>
-      <div className='text-center'>
+      <div className='menu-header' onClick={() => setExpanded(!expanded)}>
         <h1 className='section-title'>Neural Music Style Transfer</h1>
-        <p className='text-muted'>Transform your music into different styles using AI</p>
+        <button className='text-lg'>{expanded ? <MdExpandLess /> : <MdExpandMore />}</button>
       </div>
+      <motion.div
+        initial={{ height: 0, opacity: 0 }}
+        animate={{ height: expanded ? 'auto' : 0, opacity: expanded ? 1 : 0 }}
+        transition={{ duration: 0.8, ease: 'easeInOut' }}
+        className='overflow-hidden'>
+        <div className='space-y-4'>
+          <div>
+            <p className='text-muted mb-2'>Transform your music into different styles using AI</p>
 
-      <div className='space-y-4'>
-        <div className='card text-center'>
-          <input type='file' accept='audio/*' onChange={handleFileUpload} className='hidden' id='audio-upload' />
-          <label htmlFor='audio-upload' className='flex flex-col items-center cursor-pointer text-muted'>
-            <Upload className='w-12 h-12' />
-            <span className='mt-2 text-sm'>{file ? file.name : 'Upload your audio file'}</span>
-          </label>
-        </div>
+            <div className='space-y-4'>
+              <div className='card text-center'>
+                <input type='file' accept='audio/*' onChange={handleFileUpload} className='hidden' id='audio-upload' />
+                <label htmlFor='audio-upload' className='flex flex-col items-center cursor-pointer text-muted'>
+                  <motion.div animate={{ y: file ? [] : [0, -10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+                    <Upload className='w-12 h-12' />
+                  </motion.div>
+                  <span className='mt-2 text-sm'>{file ? file.name : 'Upload your audio file'}</span>
+                </label>
+              </div>
 
-        <select value={selectedStyle} onChange={(e) => setSelectedStyle(e.target.value)} className='dropdown'>
-          <option value='classical'>Classical</option>
-          <option value='jazz'>Jazz</option>
-          <option value='rock'>Rock</option>
-        </select>
+              <select value={selectedStyle} onChange={(e) => setSelectedStyle(e.target.value)} className='dropdown'>
+                <option value='classical'>Classical</option>
+                <option value='jazz'>Jazz</option>
+                <option value='rock'>Rock</option>
+              </select>
+              <ServerButton title='Transform Audio' onClick={processAudio} processing={!file || processing} />
+            </div>
 
-        <button onClick={processAudio} disabled={!file || processing} className='button-full'>
-          {processing ? 'Processing...' : 'Transform Audio'}
-        </button>
-      </div>
-
-      {result &&
-        toast.success(
-          <div className='flex items-center'>
-            <Music className='w-6 h-6 mr-2' />
-            <span>Audio processed successfully!</span>
+            {result &&
+              toast.success(
+                <div className='flex items-center'>
+                  <Music className='w-6 h-6 mr-2' />
+                  <span>Audio processed successfully!</span>
+                </div>
+              )}
           </div>
-        )}
+        </div>
+      </motion.div>
     </div>
   )
 }

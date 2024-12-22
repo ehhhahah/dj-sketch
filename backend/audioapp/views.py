@@ -14,7 +14,8 @@ class AudioViewSet(viewsets.ModelViewSet):
     serializer_class = AudioFileSerializer
 
     @action(detail=False, methods=["get"], url_path="by-filename/(?P<filename>[^/.]+)")
-    def retrieve_by_filename(self, request, filename=None):
+    def retrieve_by_filename(self, request, filename: str | None = None):
+        """Retrieve an audio file by its filename."""
         audio_file = get_object_or_404(AudioFile, file=filename)
         serializer = self.serializer_class(audio_file)
         return Response(serializer.data)
