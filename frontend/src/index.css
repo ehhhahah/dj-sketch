@@ -2,7 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  @apply bg-zinc-50;
-  @apply dark:bg-zinc-900;
+body {
+  @apply bg-zinc-50 text-zinc-900;
+  @apply dark:bg-zinc-900 dark:text-zinc-100;
+}
+
+.container {
+  @apply max-w-xl mx-auto p-6 space-y-6;
+}
+
+.section-title {
+  @apply text-lg font-bold mb-4;
+}
+
+.text-muted {
+  @apply text-zinc-600;
+}
+
+.card {
+  @apply border-2 border-dashed rounded-lg p-6;
+  @apply dark:border-zinc-800;
+}
+
+.button-primary {
+  @apply bg-zinc-500 hover:bg-zinc-600 text-white font-bold py-2 px-4 rounded;
+  @apply dark:bg-zinc-400 dark:hover:bg-zinc-500;
+}
+
+.button-danger {
+  @apply bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-4;
+}
+
+.button-full {
+  @apply w-full bg-zinc-950 text-zinc-100 p-3 rounded-lg disabled:opacity-50;
+  @apply dark:bg-zinc-100 dark:text-zinc-950;
+}
+
+.dropdown {
+  @apply w-full p-2 border rounded;
+  @apply dark:bg-zinc-800 dark:border-zinc-700;
+}
+
+.audio {
+  @apply w-full p-2 border rounded;
+  @apply dark:bg-zinc-800 dark:border-zinc-700;
 }

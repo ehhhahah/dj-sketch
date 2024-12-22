@@ -8,39 +8,49 @@ const ListUploads: React.FC<ListUploadsProps> = ({ uploads, getList }) => {
     getList()
   }, [getList])
 
+  const handleDelete = async (id: number) => {
+    const confirmed = window.confirm('Are you sure you want to delete this upload?')
+    if (!confirmed) return
+
+    try {
+      await axios.delete(`http://127.0.0.1:8000/api/audio/${id}/`).then(() => {
+        toast.success('Upload deleted successfully')
+      })
+      await getList()
+    } catch (error) {
+      toast.error('Error deleting the upload', error)
+    }
+  }
+
   return (
-    <div className='max-w-xl mx-auto p-6 space-y-6'>
+    <div className='container'>
       <div className='text-center'>
-        <h1 className='text-2xl font-bold mb-4'>List of Uploads</h1>
+        <h1 className='section-title'>List of Uploads</h1>
       </div>
       <div className='space-y-4'>
         <div className='space-y-4'>
           {uploads &&
             uploads.map((item, index) => (
-              <div key={index} className='border-2 border-dashed rounded-lg p-6 text-center'>
-                <p className='text-lg font-bold mb-4'>
-                  {item.title ? item.title : item.file ? item.file.split('/').pop() : ''}
-                </p>
-                <p className='text-zinc-600'>{item.style}</p>
-                <audio controls>
+              <div key={index} className='card text-center'>
+                <p className='font-semibold'>{item.title ? item.title : item.file ? item.file.split('/').pop() : ''}</p>
+                <p className='text-muted'>{item.style}</p>
+                <audio controls className='audio'>
                   <source src={`http://127.0.0.1:8000/uploads/${item.file}`} type='audio/mpeg' />
                 </audio>
                 <button
-                  className='bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-4'
+                  className='button-danger'
                   onClick={async () => {
-                    try {
-                      await axios.delete('http://127.0.0.1:8000/api/audio/' + item.id + '/').then(() => {
-                        toast.success('Upload deleted successfully')
-                      })
-                      await getList()
-                    } catch (error) {
-                      toast.error('Error deleting the upload', error)
-                    }
+                    await handleDelete(item.id)
                   }}>
                   Delete
                 </button>
               </div>
             ))}
+          {uploads.length === 0 && (
+            <div className='text-center'>
+              <p className='text-muted'>No uploads available</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

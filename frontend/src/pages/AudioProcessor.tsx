@@ -51,34 +51,28 @@ const AudioProcessor: React.FC<AudioProcessorProps> = ({ getList }) => {
   }
 
   return (
-    <div className='max-w-xl mx-auto p-6 space-y-6'>
+    <div className='container'>
       <div className='text-center'>
-        <h1 className='text-2xl font-bold mb-4'>Neural Music Style Transfer</h1>
-        <p className='text-zinc-600'>Transform your music into different styles using AI</p>
+        <h1 className='section-title'>Neural Music Style Transfer</h1>
+        <p className='text-muted'>Transform your music into different styles using AI</p>
       </div>
 
       <div className='space-y-4'>
-        <div className='border-2 border-dashed rounded-lg p-6 text-center'>
+        <div className='card text-center'>
           <input type='file' accept='audio/*' onChange={handleFileUpload} className='hidden' id='audio-upload' />
-          <label htmlFor='audio-upload' className='flex flex-col items-center cursor-pointer'>
-            <Upload className='w-12 h-12  text-zinc-400' />
-            <span className='mt-2 text-sm text-zinc-400'>{file ? file.name : 'Upload your audio file'}</span>
+          <label htmlFor='audio-upload' className='flex flex-col items-center cursor-pointer text-muted'>
+            <Upload className='w-12 h-12' />
+            <span className='mt-2 text-sm'>{file ? file.name : 'Upload your audio file'}</span>
           </label>
         </div>
 
-        <select
-          value={selectedStyle}
-          onChange={(e) => setSelectedStyle(e.target.value)}
-          className='w-full p-2 border rounded'>
+        <select value={selectedStyle} onChange={(e) => setSelectedStyle(e.target.value)} className='dropdown'>
           <option value='classical'>Classical</option>
           <option value='jazz'>Jazz</option>
           <option value='rock'>Rock</option>
         </select>
 
-        <button
-          onClick={processAudio}
-          disabled={!file || processing}
-          className='w-full bg-zinc-950 text-zinc-100 p-3 rounded-lg disabled:opacity-50'>
+        <button onClick={processAudio} disabled={!file || processing} className='button-full'>
           {processing ? 'Processing...' : 'Transform Audio'}
         </button>
       </div>
