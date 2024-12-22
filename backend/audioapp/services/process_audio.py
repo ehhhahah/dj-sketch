@@ -3,6 +3,9 @@ import torch.nn as nn
 import torchaudio
 
 
+__all__ = ["process_audio"]
+
+
 def process_audio(audio_path, style_model, output_path):
     # Load audio file
     waveform, sample_rate = torchaudio.load(audio_path)

@@ -1,20 +1,23 @@
 import os
-
 from django.conf import settings
-
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
 from audioapp.models import AudioFile, StyleTransferModel
 from audioapp.services.process_audio import process_audio
-
 from audioapp.serializers import AudioFileSerializer
 
 
-class AudioProcessingViewSet(viewsets.ModelViewSet):
+class AudioViewSet(viewsets.ModelViewSet):
     queryset = AudioFile.objects.all()
     serializer_class = AudioFileSerializer
+
+    @action(detail=False, methods=["get"], url_path="by-filename/(?P<filename>[^/.]+)")
+    def retrieve_by_filename(self, request, filename=None):
+        audio_file = get_object_or_404(AudioFile, file=filename)
+        serializer = self.serializer_class(audio_file)
+        return Response(serializer.data)
 
     @action(detail=True, methods=["post"])
     def apply_style(self, request, pk=None):
