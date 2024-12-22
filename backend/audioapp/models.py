@@ -4,7 +4,7 @@ import torch.nn as nn
 
 class AudioFile(models.Model):
     title = models.CharField(max_length=100)
-    file = models.FileField(upload_to="uploads/")
+    file = models.FileField()
     created_at = models.DateTimeField(auto_now_add=True)
     processed = models.BooleanField(default=False)
     style = models.CharField(max_length=50)

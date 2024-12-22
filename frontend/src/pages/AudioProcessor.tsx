@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { FaUpload as Upload, FaMusic as Music } from 'react-icons/fa'
 import { toast } from 'sonner'
+import { AudioProcessorProps } from '../types'
 
-const AudioProcessor = () => {
+const AudioProcessor: React.FC<AudioProcessorProps> = ({ getList }) => {
   const [file, setFile] = useState(null)
   const [processing, setProcessing] = useState(false)
   const [result, setResult] = useState(null)
@@ -35,6 +36,7 @@ const AudioProcessor = () => {
 
       const data = await response.json()
       setResult(data.processed_file)
+      getList() // Call getList on successful audio processing
     } catch (error) {
       toast.error(
         <div className='flex items-center'>

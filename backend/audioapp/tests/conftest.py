@@ -1,6 +1,10 @@
 import os
+import sys
 import pytest
 import django
+
+# Add the backend directory to the Python path
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djsketch.settings")
 django.setup()

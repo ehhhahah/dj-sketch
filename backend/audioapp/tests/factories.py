@@ -1,11 +1,11 @@
 import factory
 
-from backend.audioapp.models import AudioFile
+from audioapp.models import AudioFile
 
 
 class AudioFileFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = AudioFile
 
-    name = "test.wav"
+    title = "test.wav"
     file = factory.django.FileField(filename="test.wav")
