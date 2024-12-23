@@ -15,7 +15,16 @@
             "name": "djsketch"
         }
     ],
+    "sqltools.connections.default": "djsketch",
+    "sqltools.connections.savePassword": true,
+    "sqltools.connections.autoConnect": true,
+    "sqltools.connections.autoReconnect": true,
     "[typescriptreact]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "standard",
+    "python.analysis.diagnosticMode": "workspace",
 }

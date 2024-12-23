@@ -1,4 +1,5 @@
 @tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -22,7 +23,7 @@ body {
 }
 
 .text-muted {
-  @apply text-zinc-600;
+  @apply text-zinc-400;
 }
 
 .card {
@@ -39,6 +40,19 @@ body {
   @apply bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-4;
 }
 
+.button-manipulate {
+  @apply bg-violet-500 hover:bg-violet-600 text-white font-bold py-2 px-4 rounded mt-4;
+}
+
+.modal-button-cancel {
+  @apply hover:bg-zinc-300 text-zinc-900 font-light py-2 px-4;
+  @apply dark:text-zinc-400 dark:hover:bg-zinc-800;
+}
+
+.modal-header {
+  @apply flex justify-between items-baseline mb-4 border-b-[0.5px] border-zinc-300;
+}
+
 .button-full {
   @apply w-full bg-zinc-950 text-zinc-100 p-3 rounded-lg disabled:opacity-50;
   @apply dark:bg-zinc-100 dark:text-zinc-950;
@@ -52,4 +66,12 @@ body {
 .audio {
   @apply w-full p-2 border rounded;
   @apply dark:bg-zinc-800 dark:border-zinc-700;
+}
+
+.modal-overlay {
+  @apply fixed inset-0 backdrop-filter backdrop-blur-sm bg-black bg-opacity-50 flex justify-center items-center;
+}
+
+.modal-content {
+  @apply bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-lg max-w-lg w-full m-4;
 }

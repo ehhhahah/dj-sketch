@@ -5,7 +5,6 @@ import AudioProcessor from './pages/AudioProcessor'
 import ListUploads from './pages/ListUploads'
 import AudioGenerator from './pages/AudioGenerator'
 import { AudioUpload } from './types'
-import Logo from './components/Logo'
 
 function App() {
   const [uploads, setUploads] = useState<AudioUpload[]>([])

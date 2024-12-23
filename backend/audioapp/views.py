@@ -1,39 +1,87 @@
-import os
-from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework import status
 from rest_framework.response import Response
-from audioapp.models import AudioFile, StyleTransferModel
-from audioapp.services.process_audio import process_audio
-from audioapp.serializers import AudioFileSerializer
+from audioapp.models import AudioFile
+from audioapp.serializers import (
+    AudioFileSerializer,
+    AudioManipulationSerializer,
+    ProcessedAudioSerializer,
+)
+from audioapp.services.audio_manipulator import AudioManipulator
+import librosa
 
 
-class AudioViewSet(viewsets.ModelViewSet):
+class AudioFileViewSet(viewsets.ModelViewSet):
     queryset = AudioFile.objects.all()
     serializer_class = AudioFileSerializer
 
     @action(detail=False, methods=["get"], url_path="by-filename/(?P<filename>[^/.]+)")
-    def retrieve_by_filename(self, request, filename: str | None = None):
+    def retrieve_by_filename(self, request, filename: str):
         """Retrieve an audio file by its filename."""
         audio_file = get_object_or_404(AudioFile, file=filename)
         serializer = self.serializer_class(audio_file)
         return Response(serializer.data)
 
-    @action(detail=True, methods=["post"])
-    def apply_style(self, request, pk=None):
-        audio_file = self.get_object()
 
-        # Load appropriate style model
-        model = StyleTransferModel()
-        # Here you would load pre-trained weights for the specific style
+class AudioManipulationViewSet(viewsets.ViewSet):
+    """
+    ViewSet for audio manipulation operations.
+    """
 
-        output_path = os.path.join(
-            settings.MEDIA_ROOT, f"processed_{audio_file.id}.wav"
-        )
-        processed_path = process_audio(audio_file.file.path, model, output_path)
+    serializer_class = AudioManipulationSerializer
 
-        audio_file.processed = True
-        audio_file.save()
+    @action(detail=False, methods=["post"], url_path="process/(?P<audio_id>[^/.]+)")
+    def process_audio(self, request, audio_id: int):
+        """
+        Process audio file with specified manipulation parameters.
 
-        return Response({"status": "success", "processed_file": processed_path})
+        Args:
+            audio_id: ID of the audio file to process
+            request.data: {
+                manipulation_type: str,
+                parameters: dict,
+                output_length: float
+            }
+        """
+        # Validate input
+        serializer = AudioManipulationSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Get original audio file
+        audio_file = get_object_or_404(AudioFile, id=audio_id)
+
+        try:
+            # Load audio data
+            audio_data, sample_rate = librosa.load(audio_file.file, sr=None)
+
+            # Get manipulator
+            manipulator = AudioManipulator()
+            manipulation_type = serializer.validated_data["manipulation_type"]
+
+            # Process audio based on manipulation type
+            method = getattr(manipulator, manipulation_type)
+            parameters = serializer.validated_data.get("parameters", {})
+            processed_audio = method(audio_data, **parameters)
+
+            # Export processed audio
+            processed_file = manipulator.export_to_wav(processed_audio)
+
+            # Return processed file data
+            response_serializer = ProcessedAudioSerializer(
+                processed_file,
+                context={
+                    "processing_info": {
+                        "manipulation_type": manipulation_type,
+                        "parameters": parameters,
+                    }
+                },
+            )
+            return Response(response_serializer.data)
+
+        except Exception as e:
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

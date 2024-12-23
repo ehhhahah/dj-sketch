@@ -148,7 +148,6 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    # other settings
     "ENUM_NAME_OVERRIDES": {
         "ValidationErrorEnum": "drf_standardized_errors.openapi_serializers.ValidationErrorEnum.choices",
         "ClientErrorEnum": "drf_standardized_errors.openapi_serializers.ClientErrorEnum.choices",
@@ -165,6 +164,28 @@ SPECTACULAR_SETTINGS = {
     "POSTPROCESSING_HOOKS": [
         "drf_standardized_errors.openapi_hooks.postprocess_schema_enums"
     ],
+    "TITLE": "djsketch API",
+    "DESCRIPTION": "API for djsketch project",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "REDOC_UI_SETTINGS": {
+        "hideDownloadButton": True,
+        "theme": {
+            "typography": {
+                "fontFamily": "Arial, sans-serif",
+                "headings": {
+                    "fontFamily": "Arial, sans-serif",
+                },
+            },
+            "sidebar": {
+                "backgroundColor": "#fff",
+                "width": "190px",
+            },
+            "rightPanel": {
+                "backgroundColor": "#229",
+                "textColor": "#fff",
+            },
+        },
+    },
 }
 
 DRF_STANDARDIZED_ERRORS = {

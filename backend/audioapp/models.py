@@ -9,6 +9,8 @@ class AudioFile(models.Model):
     processed = models.BooleanField(default=False)
     style = models.CharField(max_length=50)
 
+    objects = models.Manager()
+
     def __str__(self) -> str:
         return f"{self.title} - {self.style}"
 

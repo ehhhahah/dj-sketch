@@ -4,9 +4,13 @@ import { toast } from 'sonner'
 import { ListUploadsProps } from '../types'
 import { MdExpandMore, MdExpandLess } from 'react-icons/md'
 import { motion } from 'framer-motion'
+import Manipulate from '../components/Manipulate'
 
 const ListUploads: React.FC<ListUploadsProps> = ({ uploads, getList }) => {
   const [expanded, setExpanded] = useState<boolean>(false)
+  const [loading, setLoading] = useState<number | null>(null)
+  const [modalOpen, setModalOpen] = useState<boolean>(false)
+  const [selectedId, setSelectedId] = useState<number | null>(null)
 
   useEffect(() => {
     getList()
@@ -24,6 +28,16 @@ const ListUploads: React.FC<ListUploadsProps> = ({ uploads, getList }) => {
     } catch (error) {
       toast.error('Error deleting the upload', error)
     }
+  }
+
+  const openManipulateModal = (id: number) => {
+    setSelectedId(id)
+    setModalOpen(true)
+  }
+
+  const closeManipulateModal = () => {
+    setSelectedId(null)
+    setModalOpen(false)
   }
 
   return (
@@ -46,17 +60,28 @@ const ListUploads: React.FC<ListUploadsProps> = ({ uploads, getList }) => {
                 <audio controls className='audio'>
                   <source src={`http://127.0.0.1:8000/uploads/${item.file}`} type='audio/mpeg' />
                 </audio>
-                <button
-                  className='button-danger'
-                  onClick={async () => {
-                    await handleDelete(item.id)
-                  }}>
-                  Delete
-                </button>
+                <div className='flex justify-center space-x-4'>
+                  <button
+                    className='button-danger'
+                    onClick={async () => {
+                      await handleDelete(item.id)
+                    }}>
+                    Delete
+                  </button>
+                  <button
+                    className='button-manipulate'
+                    onClick={() => openManipulateModal(item.id)}
+                    disabled={loading === item.id}>
+                    {loading === item.id ? 'Processing...' : 'Manipulate'}
+                  </button>
+                </div>
               </div>
             ))}
         </div>
       </motion.div>
+      {selectedId !== null && (
+        <Manipulate id={selectedId} isOpen={modalOpen} onRequestClose={closeManipulateModal} getList={getList} />
+      )}
     </div>
   )
 }
