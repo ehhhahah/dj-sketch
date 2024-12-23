@@ -15,10 +15,7 @@
             "name": "djsketch"
         }
     ],
-    "sqltools.connections.default": "djsketch",
-    "sqltools.connections.savePassword": true,
-    "sqltools.connections.autoConnect": true,
-    "sqltools.connections.autoReconnect": true,
+    "python.envFile": ".${workspaceFolder:dj-sketch}/.env",
     "[typescriptreact]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },

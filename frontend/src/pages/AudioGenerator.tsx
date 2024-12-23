@@ -7,6 +7,7 @@ import { MdExpandMore, MdExpandLess } from 'react-icons/md'
 import { motion } from 'framer-motion'
 import AudioSettingsForm from '../components/AudioSettingsForm'
 import ServerButton from '../components/ServerButton'
+import { uploadAudio } from '../utils/uploadAudio'
 
 const AudioGenerator: React.FC<AudioGeneratorProps> = ({ getList }) => {
   const [expanded, setExpanded] = useState<boolean>(false)
@@ -29,8 +30,8 @@ const AudioGenerator: React.FC<AudioGeneratorProps> = ({ getList }) => {
     // Encode the buffer to a WAV file
     const audioBuffer = buffer.get()
     const wavData = await WavEncoder.encode({
-      sampleRate: audioBuffer.sampleRate,
-      channelData: [audioBuffer.getChannelData(0)]
+      sampleRate: audioBuffer?.sampleRate,
+      channelData: [audioBuffer?.getChannelData(0)]
     })
     const audioBlob = new Blob([wavData], { type: 'audio/wav' })
     setAudioBlob(audioBlob)
@@ -43,43 +44,22 @@ const AudioGenerator: React.FC<AudioGeneratorProps> = ({ getList }) => {
     setProcessing(false)
   }
 
-  const uploadAudio = async () => {
+  const handleUpload = async () => {
     if (!audioBlob) {
       toast.error('No audio generated to upload')
       return
     }
 
     setProcessing(true)
-
-    // Create a FormData object to upload the audio file
-    const formData = new FormData()
-    formData.append('file', audioBlob, 'generated_audio.wav')
-    formData.append('style', 'generated')
-
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/audio/', {
-        method: 'POST',
-        body: formData
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`)
-      }
-
-      const data = await response.json()
-      toast.success('Audio uploaded successfully!')
-      getList() // Call getList to refresh the list of uploads
-    } catch (error) {
-      toast.error('Error uploading the generated audio', error)
-    } finally {
-      setProcessing(false)
-    }
+    const audioName = 'generated' + selectedNote + selectedOctave + '_' + selectedDuration
+    await uploadAudio({ file: audioBlob, style: 'generated', fileName: audioName, getList })
+    setProcessing(false)
   }
 
   return (
     <div className='container'>
       <div className='menu-header' onClick={() => setExpanded(!expanded)}>
-        <h1 className='section-title'>Generate and Upload Audio</h1>
+        <h1 className='section-title'>Generate Audio</h1>
         <button className='text-lg'>{expanded ? <MdExpandLess /> : <MdExpandMore />}</button>
       </div>
       <motion.div
@@ -106,7 +86,7 @@ const AudioGenerator: React.FC<AudioGeneratorProps> = ({ getList }) => {
               </div>
             )}
 
-            <ServerButton title='Upload Audio' onClick={uploadAudio} processing={processing || !audioBlob} />
+            <ServerButton title='Upload Audio' onClick={handleUpload} processing={processing || !audioBlob} />
           </div>
         </div>
       </motion.div>

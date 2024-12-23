@@ -27,7 +27,7 @@ export interface ListUploadsProps {
   getList: () => void
 }
 
-export interface AudioProcessorProps {
+export interface AudioUploaderProps {
   getList: () => void
 }
 
@@ -36,6 +36,13 @@ export interface AudioGeneratorProps {
 }
 
 // Components
+
+export interface BaseModalProps {
+  isOpen: boolean
+  onRequestClose: () => void
+  contentLabel: string
+  children: React.ReactNode
+}
 
 export interface AudioSettingsFormProps {
   selectedNote: string
@@ -57,4 +64,13 @@ export interface ManipulateProps {
   isOpen: boolean
   onRequestClose: () => void
   getList: () => void
+}
+
+// utils
+
+export interface uploadAudioProps {
+  file: Blob
+  style: string
+  getList: () => void
+  fileName?: string
 }

@@ -1,16 +1,9 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { toast } from 'sonner'
-import Modal from 'react-modal'
-import { AudioManipulation } from '../types'
+import { AudioManipulation, ManipulateProps } from '../types'
 import ServerButton from './ServerButton'
-
-interface ManipulateProps {
-  id: number
-  isOpen: boolean
-  onRequestClose: () => void
-  getList: () => void
-}
+import BaseModal from './BaseModal'
 
 const Manipulate: React.FC<ManipulateProps> = ({ id, isOpen, onRequestClose, getList }) => {
   const [loading, setLoading] = useState(false)
@@ -39,18 +32,7 @@ const Manipulate: React.FC<ManipulateProps> = ({ id, isOpen, onRequestClose, get
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onRequestClose={onRequestClose}
-      contentLabel='Manipulate Audio'
-      className='modal-content'
-      overlayClassName='modal-overlay'>
-      <div className='modal-header'>
-        <h2 className='text-xl font-bold'>Manipulate Audio</h2>
-        <button type='button' onClick={onRequestClose} className='modal-button-cancel'>
-          x
-        </button>
-      </div>
+    <BaseModal isOpen={isOpen} onRequestClose={onRequestClose} contentLabel='Manipulate Audio'>
       <form className='space-y-4'>
         <label className='block'>
           Manipulation Type:
@@ -65,10 +47,9 @@ const Manipulate: React.FC<ManipulateProps> = ({ id, isOpen, onRequestClose, get
           </select>
         </label>
         {/* Add more form fields for parameters as needed */}
-
         <ServerButton title='Manipulate' onClick={handleManipulate} processing={loading} />
       </form>
-    </Modal>
+    </BaseModal>
   )
 }
 

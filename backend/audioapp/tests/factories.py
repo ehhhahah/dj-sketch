@@ -4,7 +4,7 @@ from audioapp.models import AudioFile
 
 
 class AudioFileFactory(factory.django.DjangoModelFactory):
-    class Meta:
+    class Meta:  # type: ignore
         model = AudioFile
 
     title = "test.wav"

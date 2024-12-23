@@ -10,7 +10,7 @@ from audioapp.serializers import (
     ProcessedAudioSerializer,
 )
 from audioapp.services.audio_manipulator import AudioManipulator
-import librosa
+import librosa  # pylint: disable=import-error
 
 
 class AudioFileViewSet(viewsets.ModelViewSet):
@@ -53,35 +53,31 @@ class AudioManipulationViewSet(viewsets.ViewSet):
         # Get original audio file
         audio_file = get_object_or_404(AudioFile, id=audio_id)
 
-        try:
-            # Load audio data
-            audio_data, sample_rate = librosa.load(audio_file.file, sr=None)
+        # Load audio data
+        audio_data, sample_rate = librosa.load(audio_file.file, sr=None)  # type: ignore
 
-            # Get manipulator
-            manipulator = AudioManipulator()
-            manipulation_type = serializer.validated_data["manipulation_type"]
+        # Get manipulator
+        manipulator = AudioManipulator()
+        manipulation_type = serializer.validated_data["manipulation_type"]  # type: ignore
 
-            # Process audio based on manipulation type
-            method = getattr(manipulator, manipulation_type)
-            parameters = serializer.validated_data.get("parameters", {})
-            processed_audio = method(audio_data, **parameters)
+        # Process audio based on manipulation type
+        method = getattr(manipulator, manipulation_type)
+        parameters = serializer.validated_data.get("parameters", {})  # type: ignore
+        processed_audio = method(audio_data, **parameters)
 
-            # Export processed audio
-            processed_file = manipulator.export_to_wav(processed_audio)
+        # Export processed audio
+        processed_file = manipulator.export_to_wav(
+            processed_audio, style=manipulation_type
+        )
 
-            # Return processed file data
-            response_serializer = ProcessedAudioSerializer(
-                processed_file,
-                context={
-                    "processing_info": {
-                        "manipulation_type": manipulation_type,
-                        "parameters": parameters,
-                    }
-                },
-            )
-            return Response(response_serializer.data)
-
-        except Exception as e:
-            return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        # Return processed file data
+        response_serializer = ProcessedAudioSerializer(
+            processed_file,
+            context={
+                "processing_info": {
+                    "manipulation_type": manipulation_type,
+                    "parameters": parameters,
+                }
+            },
+        )
+        return Response(response_serializer.data)

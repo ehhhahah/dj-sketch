@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import axios from 'axios'
 import { toast, Toaster } from 'sonner'
-import AudioProcessor from './pages/AudioProcessor'
+import AudioUploader from './pages/AudioUploader'
 import ListUploads from './pages/ListUploads'
 import AudioGenerator from './pages/AudioGenerator'
 import { AudioUpload } from './types'
@@ -22,7 +22,7 @@ function App() {
     <>
       <div className='mt-20'></div>
       <Toaster position='top-right' />
-      <AudioProcessor getList={getList} />
+      <AudioUploader getList={getList} />
       <AudioGenerator getList={getList} />
       <ListUploads uploads={uploads} getList={getList} />
     </>

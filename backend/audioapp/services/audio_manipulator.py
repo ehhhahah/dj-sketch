@@ -2,7 +2,7 @@ import io
 import uuid
 
 import numpy as np
-import librosa
+import librosa  # pylint: disable=import-error
 import soundfile as sf
 
 from audioapp.models import AudioFile
@@ -74,8 +74,14 @@ class AudioManipulator:
 
         return stretched
 
-    def spectral_morphing(self, source_audio, target_audio, morph_factor=0.5):
+    def spectral_morphing(
+        self, source_audio, target_audio: np.ndarray | None = None, morph_factor=0.5
+    ):
         """Morph between two sounds in the spectral domain"""
+        if not target_audio:
+            # If no target audio is provided, get a random target
+            target_audio = np.random.randn(len(source_audio))
+
         # Get spectra
         source_spectrum = np.fft.fft(source_audio)
         target_spectrum = np.fft.fft(target_audio[: len(source_audio)])  # Match lengths
@@ -95,11 +101,17 @@ class AudioManipulator:
 
         return morphed_audio
 
-    def neural_style_transfer(self, content_audio, style_audio):
+    def neural_style_transfer(
+        self, content_audio, style_audio: np.ndarray | None = None
+    ):
         """
         Simple audio style transfer based on spectral features
         (This is a basic version - could be expanded with ML models)
         """
+        if not style_audio:
+            # If no style audio is provided, get a random style
+            style_audio = np.random.randn(len(content_audio))
+
         # Get content and style spectrograms
         content_spec = np.abs(librosa.stft(content_audio))
         style_spec = np.abs(librosa.stft(style_audio))
@@ -120,10 +132,12 @@ class AudioManipulator:
 
         return output_audio
 
-    def export_to_wav(self, audio_data: np.ndarray) -> AudioFile:
+    def export_to_wav(self, audio_data: np.ndarray, style: str | None) -> AudioFile:
         """Export audio data to wav and save as AudioFile instance"""
-        # Create an in-memory buffer instead of a temporary file
+        if not style:
+            style = "style not specified"
 
+        # Create an in-memory buffer instead of a temporary file
         buffer = io.BytesIO()
         sf.write(buffer, audio_data, self.sample_rate, format="WAV")
 
@@ -135,7 +149,7 @@ class AudioManipulator:
 
         # Create the AudioFile instance with the buffer
         audio_file = AudioFile.objects.create(
-            file=File(buffer, name=filename), processed=True, style="granular_synthesis"
+            file=File(buffer, name=filename), processed=True, style=style
         )
 
         return audio_file
