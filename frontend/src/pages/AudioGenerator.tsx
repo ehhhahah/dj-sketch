@@ -29,6 +29,7 @@ const AudioGenerator: React.FC<AudioGeneratorProps> = ({ getList }) => {
 
     // Encode the buffer to a WAV file
     const audioBuffer = buffer.get()
+    // @ts-ignore
     const wavData = await WavEncoder.encode({
       sampleRate: audioBuffer?.sampleRate,
       channelData: [audioBuffer?.getChannelData(0)]

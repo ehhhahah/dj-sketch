@@ -1,3 +1,5 @@
+import { AudioManipulationType } from '../.././constants/audioManipulationTypes'
+
 // Server JSON response types
 
 export interface AudioUpload {
@@ -8,7 +10,7 @@ export interface AudioUpload {
 }
 
 export interface AudioManipulation {
-  manipulation_type: 'spectral_freeze' | 'granular_synthesis' | 'spectral_morphing' | 'neural_style_transfer'
+  manipulation_type: AudioManipulationType
   parameters?: Record<string, any>
 }
 

@@ -30,11 +30,10 @@ class TestAudioManipulationViewSet:
         }
 
         # Process the audio file
-        url = reverse("audiomanipulationviewset-process_audio", args=[audio_file.id])
+        url = reverse("audioapp:manipulate-process-audio", args=[audio_file.id])
         response = self.client.post(url, manipulation_data, format="json")
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["file"] == audio_file.file
         assert response.data["style"] == audio_file.style
         assert (
             response.data["processing_info"]["manipulation_type"]

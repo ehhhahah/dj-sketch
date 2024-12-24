@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { toast } from 'sonner'
-import { ListUploadsProps } from '../types'
+import { ListUploadsProps, AudioUpload } from '../types'
 import { MdExpandMore, MdExpandLess } from 'react-icons/md'
 import { motion } from 'framer-motion'
 import Manipulate from '../components/Manipulate'
@@ -40,6 +40,29 @@ const ListUploads: React.FC<ListUploadsProps> = ({ uploads, getList }) => {
     setModalOpen(false)
   }
 
+  const renderDetailsTable = (item: AudioUpload) => (
+    <table className='audio-details-table'>
+      <tbody>
+        <tr className='table-header'>
+          {Object.entries(item)
+            .filter(([_, value]) => value !== null && value !== '')
+            .map(([key]) => (
+              <th key={key}>{key}</th>
+            ))}
+        </tr>
+        <tr>
+          {Object.entries(item)
+            .filter(([_, value]) => value !== null && value !== '')
+            .map(([key, value]) => (
+              <td key={key} title={value}>
+                {value}
+              </td>
+            ))}
+        </tr>
+      </tbody>
+    </table>
+  )
+
   return (
     <div className='container'>
       <div className='menu-header' onClick={() => setExpanded(!expanded)}>
@@ -55,9 +78,11 @@ const ListUploads: React.FC<ListUploadsProps> = ({ uploads, getList }) => {
           {uploads &&
             uploads.map((item, index) => (
               <div key={index} className='card text-center'>
-                <p className='font-semibold'>{item.title ? item.title : item.file ? item.file.split('/').pop() : ''}</p>
-                <p className='text-muted'>{item.style}</p>
-                <audio controls className='audio'>
+                <p className='font-semibold mb-2'>
+                  {item.title ? item.title : item.file ? item.file.split('/').pop() : ''}
+                </p>
+                {renderDetailsTable(item)}
+                <audio controls className='audio mt-2'>
                   <source src={`http://127.0.0.1:8000/uploads/${item.file}`} type='audio/mpeg' />
                 </audio>
                 <div className='flex justify-center space-x-4'>

@@ -19,6 +19,7 @@ class AudioManipulationSerializer(serializers.Serializer):
             "granular_synthesis",
             "spectral_morphing",
             "neural_style_transfer",
+            "pitch_shift",
         ],
         help_text="Type of audio manipulation to perform",
     )

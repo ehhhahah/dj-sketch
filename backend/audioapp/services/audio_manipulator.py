@@ -101,16 +101,15 @@ class AudioManipulator:
 
         return morphed_audio
 
-    def neural_style_transfer(
-        self, content_audio, style_audio: np.ndarray | None = None
-    ):
+    def neural_style_transfer(self, content_audio, style_audio_id: int) -> np.ndarray:
         """
         Simple audio style transfer based on spectral features
         (This is a basic version - could be expanded with ML models)
         """
-        if not style_audio:
-            # If no style audio is provided, get a random style
-            style_audio = np.random.randn(len(content_audio))
+        # Load style audio
+        style_audio, _ = librosa.load(
+            AudioFile.objects.get(id=style_audio_id).file.path, sr=self.sample_rate
+        )
 
         # Get content and style spectrograms
         content_spec = np.abs(librosa.stft(content_audio))
@@ -131,6 +130,12 @@ class AudioManipulator:
         output_audio = librosa.griffinlim(output_spec)
 
         return output_audio
+
+    def pitch_shift(self, audio_data: np.ndarray, shift: int) -> np.ndarray:
+        """Shift the pitch of the audio"""
+        return librosa.effects.pitch_shift(
+            audio_data.astype(float), sr=self.sample_rate, n_steps=shift
+        )
 
     def export_to_wav(self, audio_data: np.ndarray, style: str | None) -> AudioFile:
         """Export audio data to wav and save as AudioFile instance"""

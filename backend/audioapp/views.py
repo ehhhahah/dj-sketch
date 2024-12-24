@@ -17,13 +17,6 @@ class AudioFileViewSet(viewsets.ModelViewSet):
     queryset = AudioFile.objects.all()
     serializer_class = AudioFileSerializer
 
-    @action(detail=False, methods=["get"], url_path="by-filename/(?P<filename>[^/.]+)")
-    def retrieve_by_filename(self, request, filename: str):
-        """Retrieve an audio file by its filename."""
-        audio_file = get_object_or_404(AudioFile, file=filename)
-        serializer = self.serializer_class(audio_file)
-        return Response(serializer.data)
-
 
 class AudioManipulationViewSet(viewsets.ViewSet):
     """
@@ -63,7 +56,10 @@ class AudioManipulationViewSet(viewsets.ViewSet):
         # Process audio based on manipulation type
         method = getattr(manipulator, manipulation_type)
         parameters = serializer.validated_data.get("parameters", {})  # type: ignore
-        processed_audio = method(audio_data, **parameters)
+        try:
+            processed_audio = method(audio_data, **parameters)
+        except ValueError as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         # Export processed audio
         processed_file = manipulator.export_to_wav(

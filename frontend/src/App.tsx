@@ -5,6 +5,7 @@ import AudioUploader from './pages/AudioUploader'
 import ListUploads from './pages/ListUploads'
 import AudioGenerator from './pages/AudioGenerator'
 import { AudioUpload } from './types'
+import AudioRecorder from './pages/Microphone'
 
 function App() {
   const [uploads, setUploads] = useState<AudioUpload[]>([])
@@ -22,6 +23,7 @@ function App() {
     <>
       <div className='mt-20'></div>
       <Toaster position='top-right' />
+      <AudioRecorder getList={getList} />
       <AudioUploader getList={getList} />
       <AudioGenerator getList={getList} />
       <ListUploads uploads={uploads} getList={getList} />

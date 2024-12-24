@@ -39,6 +39,7 @@ CORS_ALLOWED_ORIGINS = [
 
 INSTALLED_APPS = [
     "debug_toolbar",
+    "django_extensions",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
