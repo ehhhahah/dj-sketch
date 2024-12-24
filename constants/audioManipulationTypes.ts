@@ -16,6 +16,7 @@ interface ManipulationParameters {
     pitch_shift: ParameterConfig
   }
   spectral_morphing: {
+    morph_audio_id: ParameterConfig
     morph_factor: ParameterConfig
   }
   neural_style_transfer: {
@@ -48,6 +49,7 @@ export const AUDIO_MANIPULATION_TYPES = {
     type: 'spectral_morphing',
     description: 'Morph between two audio signals',
     parameters: {
+      morph_audio_id: { type: 'number', default: 0, description: 'ID of the morph audio' },
       morph_factor: { type: 'number', default: 0.5, description: 'Morph factor between 0 and 1' }
     }
   },

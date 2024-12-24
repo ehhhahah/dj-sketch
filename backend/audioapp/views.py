@@ -16,6 +16,26 @@ import librosa  # pylint: disable=import-error
 class AudioFileViewSet(viewsets.ModelViewSet):
     queryset = AudioFile.objects.all()
     serializer_class = AudioFileSerializer
+    http_method_names = ["get", "post", "head", "patch", "delete", "options"]
+
+    def create(self, request, *args, **kwargs):
+        """Create a new audio file.
+
+        The file must be a WAV file.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def partial_update(self, request, *args, **kwargs):
+        """Allows to update all fields except the audio file."""
+        if "file" in request.data:
+            return Response(
+                {"detail": "Audio file cannot be edited"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return super().partial_update(request, *args, **kwargs)
 
 
 class AudioManipulationViewSet(viewsets.ViewSet):
@@ -63,7 +83,7 @@ class AudioManipulationViewSet(viewsets.ViewSet):
 
         # Export processed audio
         processed_file = manipulator.export_to_wav(
-            processed_audio, style=manipulation_type
+            processed_audio, style=manipulation_type, made_from=audio_id
         )
 
         # Return processed file data

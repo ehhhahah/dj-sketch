@@ -1,31 +1,9 @@
-import { AudioManipulationType } from '../.././constants/audioManipulationTypes'
-
-// Server JSON response types
-
-export interface AudioUpload {
-  id: number
-  title: string
-  file: string
-  style: string
-}
-
-export interface AudioManipulation {
-  manipulation_type: AudioManipulationType
-  parameters?: Record<string, any>
-}
-
-export interface ProcessedAudio {
-  id: number
-  file: string
-  style: string
-  title: string
-  processing_info: Record<string, any>
-}
+import { AudioUploadSchema } from '../.././constants/serverSchemas'
 
 // Pages
 
 export interface ListUploadsProps {
-  uploads: AudioUpload[]
+  uploads: AudioUploadSchema[]
   getList: () => void
 }
 

@@ -4,11 +4,11 @@ import { toast, Toaster } from 'sonner'
 import AudioUploader from './pages/AudioUploader'
 import ListUploads from './pages/ListUploads'
 import AudioGenerator from './pages/AudioGenerator'
-import { AudioUpload } from './types'
+import { AudioUploadSchema } from '../../constants/serverSchemas'
 import AudioRecorder from './pages/Microphone'
 
 function App() {
-  const [uploads, setUploads] = useState<AudioUpload[]>([])
+  const [uploads, setUploads] = useState<AudioUploadSchema[]>([])
 
   const getList = useCallback(async () => {
     try {

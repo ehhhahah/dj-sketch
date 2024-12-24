@@ -8,7 +8,8 @@ import {
 } from '../../../constants/audioManipulationTypes'
 import ServerButton from './ServerButton'
 import BaseModal from './BaseModal'
-import { AudioManipulation, ManipulateProps } from '../types'
+import { ManipulateProps } from '../types'
+import { AudioManipulationSchema } from '../../../constants/serverSchemas'
 
 const Manipulate: React.FC<ManipulateProps> = ({ id, isOpen, onRequestClose, getList }) => {
   const [loading, setLoading] = useState(false)
@@ -18,7 +19,7 @@ const Manipulate: React.FC<ManipulateProps> = ({ id, isOpen, onRequestClose, get
   const handleManipulate = async () => {
     try {
       setLoading(true)
-      await axios.post<AudioManipulation>(`http://127.0.0.1:8000/api/manipulate/process/${id}/`, {
+      await axios.post<AudioManipulationSchema>(`http://127.0.0.1:8000/api/manipulate/process/${id}/`, {
         manipulation_type: manipulationType,
         parameters
       })

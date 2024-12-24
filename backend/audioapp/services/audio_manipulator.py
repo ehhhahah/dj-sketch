@@ -74,13 +74,12 @@ class AudioManipulator:
 
         return stretched
 
-    def spectral_morphing(
-        self, source_audio, target_audio: np.ndarray | None = None, morph_factor=0.5
-    ):
+    def spectral_morphing(self, source_audio, morph_audio_id: int, morph_factor=0.5):
         """Morph between two sounds in the spectral domain"""
-        if not target_audio:
-            # If no target audio is provided, get a random target
-            target_audio = np.random.randn(len(source_audio))
+        # Load morph audio
+        target_audio, _ = librosa.load(
+            AudioFile.objects.get(id=morph_audio_id).file.path, sr=self.sample_rate
+        )
 
         # Get spectra
         source_spectrum = np.fft.fft(source_audio)
@@ -137,7 +136,9 @@ class AudioManipulator:
             audio_data.astype(float), sr=self.sample_rate, n_steps=shift
         )
 
-    def export_to_wav(self, audio_data: np.ndarray, style: str | None) -> AudioFile:
+    def export_to_wav(
+        self, audio_data: np.ndarray, style: str | None, made_from: int | None
+    ) -> AudioFile:
         """Export audio data to wav and save as AudioFile instance"""
         if not style:
             style = "style not specified"
@@ -153,8 +154,12 @@ class AudioManipulator:
         filename = f"processed_{uuid.uuid4().hex[:8]}.wav"
 
         # Create the AudioFile instance with the buffer
+        made_from_file = AudioFile.objects.get(id=made_from) if made_from else None
         audio_file = AudioFile.objects.create(
-            file=File(buffer, name=filename), processed=True, style=style
+            file=File(buffer, name=filename),
+            processed=True,
+            style=style,
+            made_from=made_from_file,
         )
 
         return audio_file
