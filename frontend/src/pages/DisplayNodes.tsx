@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { GraphCanvas, darkTheme } from 'reagraph'
 import { AudioUploadSchema } from '../../../constants/serverSchemas'
 import { MdExpandMore, MdExpandLess } from 'react-icons/md'
@@ -12,11 +12,32 @@ interface DisplayNodesProps {
 
 const DisplayNodes: React.FC<DisplayNodesProps> = ({ uploads }) => {
   const [expanded, setExpanded] = useState<boolean>(false)
+  const [currentFile, setCurrentFile] = useState<string | null>(null)
+
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:8888/')
+    ws.onopen = () => {
+      console.log('WebSocket connected')
+    }
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data)
+      setCurrentFile(data.message)
+      console.log(data.message)
+    }
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error)
+    }
+    ws.onclose = (event) => {
+      console.log('WebSocket closed:', event)
+    }
+    return () => ws.close()
+  }, [])
 
   const nodes = uploads.map((upload) => ({
     id: upload.id.toString(),
     label: upload.title || upload.file.split('/').pop() || 'Unknown',
-    subLabel: `#${upload.id.toString()} (${relativeDate(upload.created_at, 'created_at')})`
+    subLabel: `#${upload.id.toString()} (${relativeDate(upload.created_at, 'created_at')})`,
+    color: currentFile === upload.file ? '#f00' : '#0f0'
   }))
 
   const edges = uploads

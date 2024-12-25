@@ -1,6 +1,7 @@
 import sys
 import random
 import asyncio
+import json
 
 from asgiref.sync import sync_to_async
 from loguru import logger
@@ -9,18 +10,9 @@ from pydub import AudioSegment
 from aalink import Link  # pylint: disable=import-error disable=no-name-in-module
 import sounddevice as sd  # pylint: disable=import-error
 import numpy as np
+from django_redis import get_redis_connection
 
 from audioapp.models import AudioFile
-
-
-# Configure logging
-logger.remove()
-logger.add("logs/file_{time}.log")
-logger.add(
-    sys.stdout,
-    colorize=True,
-    format="<green>{time}</green> | <level>{level: <8}</level> | <cyan>{message}</cyan>",
-)
 
 
 @sync_to_async
@@ -31,6 +23,11 @@ def load_random_audio() -> AudioSegment | None:
         return None
     random_file = random.choice(audio_files).file.path
     logger.info(f"Loaded random audio file: {random_file}")
+
+    # send websocket
+    connection = get_redis_connection("default")
+    connection.publish("events", json.dumps(random_file))
+
     return AudioSegment.from_file(random_file)
 
 
@@ -64,14 +61,32 @@ async def stream_audio_with_link():
             await link.sync(1)
             sd.play(audio_data, samplerate=samplerate, device=device_name)
 
-            logger.info("Audio playback finished.")
+            logger.debug("Audio playback finished.")
         except Exception as e:
             logger.error(f"Error during audio playback: {e}")
+
+
+def configure_logging(debug_level: bool = False):
+    logger.remove()
+    logger.add("logs/file_{time}.log")
+    logger.add(
+        sys.stdout,
+        colorize=True,
+        format="<green>{time}</green> | <level>{level: <8}</level> | <cyan>{message}</cyan>",
+        level="INFO" if not debug_level else "DEBUG",
+    )
 
 
 class Command(BaseCommand):
     help = "Stream random audio files from database"
 
+    def add_arguments(self, parser):
+        parser.add_argument("--debug", action="store_true", help="Enable debug logs")
+
     def handle(self, *args, **options):
+        configure_logging(options["debug"])
         logger.info("Starting audio streaming")
-        asyncio.run(stream_audio_with_link())
+        try:
+            asyncio.run(stream_audio_with_link())
+        except KeyboardInterrupt:
+            logger.info("Audio streaming stopped by user")
