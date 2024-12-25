@@ -1,24 +1,18 @@
 .break-line {
-  @apply border-b-2 border-zinc-300 my-0 cursor-row-resize relative grid;
+  @apply border-[1px] border-zinc-300 my-0 cursor-row-resize relative grid;
+  @apply shadow-2xl;
 }
 
 .resize-dot {
   @apply w-8 h-4 bg-zinc-300 rounded-full cursor-row-resize z-20 absolute justify-self-center -translate-y-2;
-}
-
-.resize-dot:hover,
-.break-line:hover,
-.resize-dot:focus,
-.break-line:focus,
-.break-line:focus .resize-dot,
-.break-line:hover .resize-dot {
-  @apply bg-zinc-500 border-zinc-500;
+  @apply md:w-4 md:h-8 md:self-center;
 }
 
 .resize-dot::before,
 .resize-dot::after {
   content: '';
-  @apply absolute left-1/2 transform -translate-x-1/2 w-4 h-0.5 bg-zinc-800;
+  @apply absolute left-1/2 transform -translate-x-1/2 w-4 h-0.5 bg-zinc-900;
+  @apply md:w-0.5 md:h-2 md:rotate-90;
 }
 
 .resize-dot::before {
@@ -31,6 +25,16 @@
 
 .resize-dot::after {
   content: '';
-  @apply absolute left-1/2 transform -translate-x-1/2 w-4 h-0.5 bg-zinc-800;
+  @apply absolute left-1/2 transform -translate-x-1/2 w-4 h-0.5 bg-zinc-900;
   top: 50%;
+  @apply md:w-0.5 md:h-2 md:rotate-90;
+}
+
+.resize-dot:hover,
+.break-line:hover,
+.resize-dot:focus,
+.break-line:focus,
+.break-line:focus .resize-dot,
+.break-line:hover .resize-dot {
+  @apply bg-zinc-500 border-zinc-500;
 }

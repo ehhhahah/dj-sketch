@@ -11,6 +11,8 @@ import DisplayNodes from './pages/DisplayNodes'
 import './stylees/divider.css'
 
 function App() {
+  const [isMd, setIsMd] = useState(window.innerWidth >= 768)
+
   const [uploads, setUploads] = useState<AudioUploadSchema[]>([])
   const [dividerY, setDividerY] = useState(window.innerHeight / 2)
   const [dividerX, setDividerX] = useState(window.innerWidth / 2)
@@ -34,9 +36,11 @@ function App() {
     const handleMouseMove = (e: MouseEvent) => {
       if (window.innerWidth >= 768) {
         const newWidth = startWidth + (e.clientX - startX)
+        setIsMd(true)
         setDividerX(newWidth)
       } else {
         const newHeight = startHeight + (e.clientY - startY)
+        setIsMd(false)
         setDividerY(newHeight)
       }
     }
@@ -51,7 +55,7 @@ function App() {
   }
 
   const handleDoubleClick = () => {
-    if (window.innerWidth >= 768) {
+    if (isMd) {
       setDividerX(window.innerWidth / 2)
     } else {
       setDividerY(window.innerHeight / 2)
@@ -61,7 +65,7 @@ function App() {
   return (
     <div className='flex flex-col md:flex-row h-screen'>
       <Toaster position='top-right' />
-      <div className='overflow-y-auto md:overflow-x-auto' style={{ height: dividerY, width: dividerX }}>
+      <div className='overflow-y-auto' style={{ height: isMd ? '100%' : dividerY, width: isMd ? dividerX : '100%' }}>
         <AudioRecorder getList={getList} />
         <AudioUploader getList={getList} />
         <AudioGenerator getList={getList} />
@@ -71,12 +75,15 @@ function App() {
         className='break-line'
         onMouseDown={handleMouseDown}
         onDoubleClick={handleDoubleClick}
-        style={{ cursor: window.innerWidth >= 768 ? 'col-resize' : 'row-resize' }}>
+        style={{ cursor: isMd ? 'col-resize' : 'row-resize' }}>
         <div className='resize-dot' />
       </div>
       <div
-        className='overflow-y-auto md:overflow-x-auto'
-        style={{ height: `calc(100% - ${dividerY}px - 2px)`, width: `calc(100% - ${dividerX}px - 2px)` }}>
+        className='overflow-y-auto'
+        style={{
+          height: isMd ? '100%' : window.innerHeight - dividerY,
+          width: isMd ? window.innerWidth - dividerX : '100%'
+        }}>
         <ListUploads uploads={uploads} getList={getList} />
         <DisplayNodes uploads={uploads} />
       </div>
