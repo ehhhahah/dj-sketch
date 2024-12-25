@@ -40,6 +40,7 @@ CORS_ALLOWED_ORIGINS = [
 INSTALLED_APPS = [
     "debug_toolbar",
     "django_extensions",
+    "django_daisy",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -47,10 +48,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "django_filters",
     "drf_spectacular",
     "drf_standardized_errors",
     "corsheaders",
     "audioapp",
+    "django_cleanup.apps.CleanupSelectedConfig",
+    "drf_api_logger",
 ]
 
 MIDDLEWARE = [
@@ -62,6 +66,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
@@ -95,6 +100,8 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+DRF_API_LOGGER_DATABASE = True  # Default to False
 
 
 # Password validation
@@ -178,11 +185,12 @@ SPECTACULAR_SETTINGS = {
                 },
             },
             "sidebar": {
-                "backgroundColor": "#fff",
+                "backgroundColor": "#444",
+                "textColor": "#eee",
                 "width": "190px",
             },
             "rightPanel": {
-                "backgroundColor": "#229",
+                "backgroundColor": "#115",
                 "textColor": "#fff",
             },
         },
@@ -201,4 +209,16 @@ DRF_STANDARDIZED_ERRORS = {
         "429",
         "500",
     ],
+}
+
+DAISY_SETTINGS = {
+    "DONT_SUPPORT_ME": True,
+    "SITE_LOGO": "/static/logo.png",
+    "SITE_TITLE": " ",
+    "SITE_HEADER": " ",
+    "APPS_REORDER": {
+        "drf_api_logger": {
+            "icon": "fa fa-history",
+        }
+    },
 }

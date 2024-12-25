@@ -2,8 +2,10 @@ import os
 from django.db import models
 from django.utils.safestring import mark_safe
 from django.conf import settings
+from django_cleanup import cleanup
 
 
+@cleanup.select
 class AudioFile(models.Model):
     """
     Model to store audio files

@@ -60,7 +60,9 @@ const AudioGenerator: React.FC<AudioGeneratorProps> = ({ getList }) => {
   return (
     <div className='container'>
       <div className='menu-header' onClick={() => setExpanded(!expanded)}>
-        <h1 className='section-title'>Generate Audio</h1>
+        <h1 className='section-title'>
+          <span>Generate</span> audio
+        </h1>
         <button className='text-lg'>{expanded ? <MdExpandLess /> : <MdExpandMore />}</button>
       </div>
       <motion.div

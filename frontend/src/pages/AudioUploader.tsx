@@ -31,7 +31,9 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ getList }) => {
   return (
     <div className='container'>
       <div className='menu-header' onClick={() => setExpanded(!expanded)}>
-        <h1 className='section-title'>Upload audio</h1>
+        <h1 className='section-title'>
+          <span>Upload</span> audio
+        </h1>
         <button className='text-lg'>{expanded ? <MdExpandLess /> : <MdExpandMore />}</button>
       </div>
       <motion.div

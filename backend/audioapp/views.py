@@ -3,12 +3,16 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.response import Response
+from django_filters import rest_framework as filters
+
 from audioapp.models import AudioFile
 from audioapp.serializers import (
     AudioFileSerializer,
     AudioManipulationSerializer,
     ProcessedAudioSerializer,
 )
+from audioapp.filters import AudioFilter
+
 from audioapp.services.audio_manipulator import AudioManipulator
 import librosa  # pylint: disable=import-error
 
@@ -17,6 +21,8 @@ class AudioFileViewSet(viewsets.ModelViewSet):
     queryset = AudioFile.objects.all()
     serializer_class = AudioFileSerializer
     http_method_names = ["get", "post", "head", "patch", "delete", "options"]
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = AudioFilter
 
     def create(self, request, *args, **kwargs):
         """Create a new audio file.

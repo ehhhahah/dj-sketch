@@ -44,7 +44,9 @@ const ListUploads: React.FC<ListUploadsProps> = ({ uploads, getList }) => {
   return (
     <div className='container'>
       <div className='menu-header' onClick={() => setExpanded(!expanded)}>
-        <h1 className='section-title'>List of Uploads</h1>
+        <h1 className='section-title'>
+          <span>List</span> of uploads
+        </h1>
         <button className='text-lg'>{expanded ? <MdExpandLess /> : <MdExpandMore />}</button>
       </div>
       <motion.div

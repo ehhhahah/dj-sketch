@@ -165,7 +165,9 @@ const AudioRecorder: React.FC<AudioUploaderProps> = ({ getList }) => {
   return (
     <div className='container'>
       <div className='menu-header' onClick={() => setState((prev) => ({ ...prev, expanded: !prev.expanded }))}>
-        <h1 className='section-title'>Record Audio</h1>
+        <h1 className='section-title'>
+          <span>Record</span> audio
+        </h1>
         <button className='text-lg'>{state.expanded ? <MdExpandLess /> : <MdExpandMore />}</button>
       </div>
       <motion.div
