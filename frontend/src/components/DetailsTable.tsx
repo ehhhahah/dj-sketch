@@ -1,6 +1,6 @@
 import React from 'react'
 import { AudioUploadSchema } from '../../../constants/serverSchemas'
-import { formatDistanceToNow } from 'date-fns'
+import { relativeDate } from '../utils/relativeDate'
 
 interface DetailsTableProps {
   item: AudioUploadSchema
@@ -13,10 +13,6 @@ const isLink = (value: string) => {
   } catch (_) {
     return false
   }
-}
-
-const isDate = (value: string) => {
-  return !isNaN(Date.parse(value))
 }
 
 const DetailsTable: React.FC<DetailsTableProps> = ({ item }) => {
@@ -37,10 +33,8 @@ const DetailsTable: React.FC<DetailsTableProps> = ({ item }) => {
                 <a href={value} target='_blank' rel='noopener noreferrer' className='underline'>
                   {value}
                 </a>
-              ) : isDate(value) && key !== 'id' && key !== 'made_from' ? (
-                formatDistanceToNow(new Date(value), { addSuffix: true })
               ) : (
-                value
+                relativeDate(value)
               )}
             </td>
           ))}

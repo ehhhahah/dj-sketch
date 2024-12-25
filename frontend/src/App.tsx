@@ -6,6 +6,7 @@ import ListUploads from './pages/ListUploads'
 import AudioGenerator from './pages/AudioGenerator'
 import { AudioUploadSchema } from '../../constants/serverSchemas'
 import AudioRecorder from './pages/Microphone'
+import DisplayNodes from './pages/DisplayNodes'
 
 function App() {
   const [uploads, setUploads] = useState<AudioUploadSchema[]>([])
@@ -27,6 +28,7 @@ function App() {
       <AudioUploader getList={getList} />
       <AudioGenerator getList={getList} />
       <ListUploads uploads={uploads} getList={getList} />
+      <DisplayNodes uploads={uploads} />
     </>
   )
 }
