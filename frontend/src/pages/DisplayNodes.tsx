@@ -12,32 +12,23 @@ interface DisplayNodesProps {
 
 const DisplayNodes: React.FC<DisplayNodesProps> = ({ uploads }) => {
   const [expanded, setExpanded] = useState<boolean>(false)
-  const [currentFile, setCurrentFile] = useState<string | null>(null)
+  const [currentFile, setCurrentFile] = useState<number | null>(null)
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8888/')
-    ws.onopen = () => {
-      console.log('WebSocket connected')
-    }
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      setCurrentFile(data.message)
-      console.log(data.message)
-    }
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error)
-    }
-    ws.onclose = (event) => {
-      console.log('WebSocket closed:', event)
-    }
-    return () => ws.close()
-  }, [])
+    const interval = setInterval(() => {
+      fetch('http://127.0.0.1:8000/api/history/current/')
+        .then((response) => response.json())
+        .then((data) => {
+          setCurrentFile(data.audio_file__id)
+        })
+    }, 1000)
+    return () => clearInterval(interval)
+  })
 
   const nodes = uploads.map((upload) => ({
     id: upload.id.toString(),
     label: upload.title || upload.file.split('/').pop() || 'Unknown',
-    subLabel: `#${upload.id.toString()} (${relativeDate(upload.created_at, 'created_at')})`,
-    color: currentFile === upload.file ? '#f00' : '#0f0'
+    subLabel: `#${upload.id.toString()} (${relativeDate(upload.created_at, 'created_at')})`
   }))
 
   const edges = uploads
@@ -66,6 +57,7 @@ const DisplayNodes: React.FC<DisplayNodesProps> = ({ uploads }) => {
           <GraphCanvas
             nodes={nodes}
             edges={edges}
+            selections={currentFile ? [currentFile.toString()] : []}
             theme={{
               ...darkTheme,
               canvas: {

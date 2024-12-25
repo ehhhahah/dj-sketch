@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from audioapp.models import AudioFile
+from audioapp.models import AudioFile, PlayHistory
 
 from django.core.files.base import ContentFile
 import os
@@ -99,3 +99,12 @@ class ProcessedAudioSerializer(serializers.ModelSerializer):
 
     def get_processing_info(self, obj):
         return self.context.get("processing_info", {})
+
+
+class PlayHistorySerializer(serializers.ModelSerializer):
+    audio_file__id = serializers.IntegerField(source="audio_file.id")
+
+    class Meta:
+        model = PlayHistory
+        fields = ["audio_file__id", "played_at"]
+        read_only_fields = ["played_at"]

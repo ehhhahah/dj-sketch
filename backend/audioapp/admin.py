@@ -1,5 +1,5 @@
 from django.contrib import admin
-from audioapp.models import AudioFile
+from audioapp.models import AudioFile, PlayHistory
 
 
 @admin.register(AudioFile)
@@ -31,3 +31,12 @@ class AudioFileAdmin(admin.ModelAdmin):
 
     def sound_display(self, item):
         return item.sound_display
+
+
+@admin.register(PlayHistory)
+class PlayHistoryAdmin(admin.ModelAdmin):
+    list_display = ("audio_file", "played_at")
+    list_filter = ("played_at",)
+    search_fields = ("audio_file__title", "audio_file__style")
+    readonly_fields = ("played_at",)
+    date_hierarchy = "played_at"

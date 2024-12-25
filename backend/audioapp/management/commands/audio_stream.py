@@ -1,7 +1,8 @@
 import sys
 import random
 import asyncio
-import json
+
+# import json
 
 from asgiref.sync import sync_to_async
 from loguru import logger
@@ -9,10 +10,10 @@ from django.core.management.base import BaseCommand
 from pydub import AudioSegment
 from aalink import Link  # pylint: disable=import-error disable=no-name-in-module
 import sounddevice as sd  # pylint: disable=import-error
-import numpy as np
-from django_redis import get_redis_connection
+import numpy as nps
 
-from audioapp.models import AudioFile
+# from django_redis import get_redis_connection
+from audioapp.models import AudioFile, PlayHistory
 
 
 @sync_to_async
@@ -21,12 +22,15 @@ def load_random_audio() -> AudioSegment | None:
     if not audio_files:
         logger.error("No audio files found in the database.")
         return None
-    random_file = random.choice(audio_files).file.path
-    logger.info(f"Loaded random audio file: {random_file}")
+    instance = random.choice(audio_files)
+    logger.info(f"Loaded random audio: {instance}")
+
+    PlayHistory.objects.create(audio_file=instance)
+    random_file = instance.file.path
 
     # send websocket
-    connection = get_redis_connection("default")
-    connection.publish("events", json.dumps(random_file))
+    # connection = get_redis_connection("default")
+    # connection.publish("events", json.dumps(random_file))
 
     return AudioSegment.from_file(random_file)
 

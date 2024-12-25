@@ -4,12 +4,14 @@ from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.response import Response
 from django_filters import rest_framework as filters
+from drf_spectacular.utils import extend_schema
 
-from audioapp.models import AudioFile
+from audioapp.models import AudioFile, PlayHistory
 from audioapp.serializers import (
     AudioFileSerializer,
     AudioManipulationSerializer,
     ProcessedAudioSerializer,
+    PlayHistorySerializer,
 )
 from audioapp.filters import AudioFilter
 
@@ -103,3 +105,22 @@ class AudioManipulationViewSet(viewsets.ViewSet):
             },
         )
         return Response(response_serializer.data)
+
+
+class PlayHistoryGetView(viewsets.GenericViewSet):
+    queryset = PlayHistory.objects.all()
+    serializer_class = PlayHistorySerializer
+    http_method_names = ["get", "options"]
+
+    @action(detail=False, methods=["get"], url_path="current")
+    def current(self, request, *args, **kwargs):
+        """Retrieve the last played audio file."""
+        queryset = self.get_queryset()
+        history = queryset.last()
+        if history is None:
+            return Response(
+                {"detail": "No play history found"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = self.get_serializer(history)
+        return Response(serializer.data)

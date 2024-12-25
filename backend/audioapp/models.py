@@ -43,3 +43,18 @@ class AudioFile(models.Model):
             )
 
         return ""
+
+
+class PlayHistory(models.Model):
+    """
+    Model to store play history
+    """
+
+    audio_file = models.ForeignKey(AudioFile, on_delete=models.CASCADE)
+    played_at = models.DateTimeField(auto_now_add=True)
+
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = "Play History"
+        verbose_name_plural = "Play Histories"

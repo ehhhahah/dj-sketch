@@ -5,16 +5,22 @@ from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 
-from audioapp.views import AudioFileViewSet, AudioManipulationViewSet
+from audioapp.views import (
+    AudioFileViewSet,
+    AudioManipulationViewSet,
+    PlayHistoryGetView,
+)
 
 router = DefaultRouter()
 router.register(r"audio", AudioFileViewSet, basename="audio")
 router.register(r"manipulate", AudioManipulationViewSet, basename="manipulate")
+router.register(r"history", PlayHistoryGetView, basename="history")
 
 urlpatterns = router.urls
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include((router.urls, "audioapp"))),
+    # docs
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "api/schema/redoc/",
