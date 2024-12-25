@@ -1,11 +1,16 @@
 import sys
 import random
+import asyncio
+
 from loguru import logger
 from django.core.management.base import BaseCommand
 from pydub import AudioSegment
+from aalink import Link  # pylint: disable=import-error
 import sounddevice as sd  # pylint: disable=import-error
 import numpy as np
+
 from audioapp.models import AudioFile
+
 
 # Configure logging
 logger.add("logs/file_{time}.log")
@@ -63,11 +68,47 @@ def stream_audio(audio):
         logger.error(f"Error during audio playback: {e}")
 
 
+async def stream_audio_with_link(audio):
+    """Stream audio data to the default output device using aalink."""
+    # Convert pydub AudioSegment to numpy array
+    audio_data = np.array(audio.get_array_of_samples())
+    audio_data = audio_data.astype(np.float32) / (2**15)  # Normalize for sounddevice
+
+    # Get the frame rate and ensure compatibility
+    samplerate = audio.frame_rate
+
+    try:
+        # Set BlackHole as output device
+        device_name = "BlackHole 2ch"  # Replace with your device name or index
+
+        # Sync with Link
+        loop = asyncio.get_running_loop()
+        link = Link(120, loop)
+        link.enabled = True
+
+        # Play on one
+        await link.sync(1)
+        sd.play(audio_data, samplerate=samplerate, device=device_name)
+
+        logger.info("Audio playback finished.")
+    except Exception as e:
+        logger.error(f"Error during audio playback: {e}")
+
+
 class Command(BaseCommand):
     help = "Stream random audio files from database"
 
-    def handle(self, *args, **kwargs):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--with_link",
+            action="store_true",
+            help="Use link to stream audio",
+        )
+
+    def handle(self, *args, **options):
         logger.info("Starting audio streaming")
+        with_link = options["with_link"]
+
         while True:
             audio = load_random_audio()
             if audio is None:
@@ -75,4 +116,9 @@ class Command(BaseCommand):
                 break
 
             logger.info("Playing selected audio")
-            stream_audio(audio.set_channels(2).set_frame_rate(44100))
+            if with_link:
+                asyncio.run(
+                    stream_audio_with_link(audio.set_channels(2).set_frame_rate(44100))
+                )
+            else:
+                stream_audio(audio.set_channels(2).set_frame_rate(44100))
