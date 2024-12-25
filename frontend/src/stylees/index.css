@@ -11,11 +11,65 @@ body {
 }
 
 .container {
-  @apply max-w-xl mx-auto p-6 space-y-6;
+  @apply w-full mx-0 max-w-none space-y-6;
+}
+
+.expanded-parent {
+  @apply overflow-hidden mt-0 mb-0;
+}
+
+.container > :not([hidden]) ~ :not([hidden]) {
+  @apply m-0;
+}
+
+.expanded-content {
+  @apply m-4 space-y-4;
+}
+
+.break-line {
+  @apply border-b-2 border-zinc-300 my-0 cursor-row-resize relative grid;
+}
+
+.resize-dot {
+  @apply w-8 h-4 bg-zinc-300 rounded-full cursor-row-resize z-20 absolute justify-self-center -translate-y-2;
+}
+
+.resize-dot:hover,
+.break-line:hover,
+.resize-dot:focus,
+.break-line:focus,
+.break-line:focus .resize-dot,
+.break-line:hover .resize-dot {
+  @apply bg-zinc-500 border-zinc-500;
+}
+
+.resize-dot::before,
+.resize-dot::after {
+  content: '';
+  @apply absolute left-1/2 transform -translate-x-1/2 w-4 h-0.5 bg-zinc-800;
+}
+
+.resize-dot::before {
+  top: 25%;
+}
+
+.resize-dot::after {
+  top: 75%;
+}
+
+.resize-dot::after {
+  content: '';
+  @apply absolute left-1/2 transform -translate-x-1/2 w-4 h-0.5 bg-zinc-800;
+  top: 50%;
+}
+
+.modal-overlay {
+  @apply z-30;
 }
 
 .menu-header {
-  @apply flex flex-row justify-between cursor-pointer border-[0.5px] border-zinc-800 p-1;
+  @apply flex flex-row justify-between cursor-pointer border-b-[0.5px] border-zinc-800 p-2;
+  @apply sticky top-0 z-10 backdrop-blur-lg;
 }
 
 .menu-header h1 {
@@ -28,7 +82,7 @@ body {
 
 .menu-header:hover,
 .menu-header:focus {
-  @apply font-serif italic font-bold bg-zinc-800;
+  @apply font-serif italic font-bold;
 }
 
 .section-title {

@@ -174,8 +174,8 @@ const AudioRecorder: React.FC<AudioUploaderProps> = ({ getList }) => {
         initial={{ height: 0, opacity: 0 }}
         animate={{ height: state.expanded ? 'auto' : 0, opacity: state.expanded ? 1 : 0 }}
         transition={{ duration: 0.8, ease: 'easeInOut' }}
-        className='overflow-hidden'>
-        <div className='space-y-4'>
+        className='expanded-parent'>
+        <div className='expanded-content'>
           <div className='flex flex-col items-center'>
             {state.recording ? (
               <button onClick={handleStopRecording} className='record-button stop'>

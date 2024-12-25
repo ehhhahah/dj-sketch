@@ -53,8 +53,8 @@ const ListUploads: React.FC<ListUploadsProps> = ({ uploads, getList }) => {
         initial={{ height: 0, opacity: 0 }}
         animate={{ height: expanded ? 'auto' : 0, opacity: expanded ? 1 : 0 }}
         transition={{ duration: 0.8, ease: 'easeInOut' }}
-        className='overflow-hidden'>
-        <div className='space-y-4'>
+        className='expanded-parent'>
+        <div className='expanded-content'>
           {uploads &&
             uploads.map((item, index) => (
               <div key={index} className='card text-center'>

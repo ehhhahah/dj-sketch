@@ -2,10 +2,11 @@ import sys
 import random
 import asyncio
 
+from asgiref.sync import sync_to_async
 from loguru import logger
 from django.core.management.base import BaseCommand
 from pydub import AudioSegment
-from aalink import Link  # pylint: disable=import-error
+from aalink import Link  # pylint: disable=import-error disable=no-name-in-module
 import sounddevice as sd  # pylint: disable=import-error
 import numpy as np
 
@@ -21,6 +22,7 @@ logger.add(
 )
 
 
+@sync_to_async
 def load_random_audio() -> AudioSegment | None:
     audio_files = AudioFile.objects.all()
     if not audio_files:
@@ -68,31 +70,40 @@ def stream_audio(audio):
         logger.error(f"Error during audio playback: {e}")
 
 
-async def stream_audio_with_link(audio):
+async def stream_audio_with_link():
     """Stream audio data to the default output device using aalink."""
-    # Convert pydub AudioSegment to numpy array
-    audio_data = np.array(audio.get_array_of_samples())
-    audio_data = audio_data.astype(np.float32) / (2**15)  # Normalize for sounddevice
 
-    # Get the frame rate and ensure compatibility
-    samplerate = audio.frame_rate
+    loop = asyncio.get_running_loop()
+    link = Link(120, loop)
+    link.enabled = True
 
-    try:
-        # Set BlackHole as output device
-        device_name = "BlackHole 2ch"  # Replace with your device name or index
+    logger.info("Playing selected audio")
+    while True:
+        audio = await load_random_audio()
+        if audio is None:
+            logger.info("No more audio files to play. Exiting.")
+            break
 
-        # Sync with Link
-        loop = asyncio.get_running_loop()
-        link = Link(120, loop)
-        link.enabled = True
+        # Convert pydub AudioSegment to numpy array
+        audio_data = np.array(audio.get_array_of_samples())
+        audio_data = audio_data.astype(np.float32) / (
+            2**15
+        )  # Normalize for sounddevice
 
-        # Play on one
-        await link.sync(1)
-        sd.play(audio_data, samplerate=samplerate, device=device_name)
+        # Get the frame rate and ensure compatibility
+        samplerate = audio.frame_rate
 
-        logger.info("Audio playback finished.")
-    except Exception as e:
-        logger.error(f"Error during audio playback: {e}")
+        try:
+            # Set BlackHole as output device
+            device_name = "BlackHole 2ch"  # Replace with your device name or index
+
+            # Play on one
+            await link.sync(1)
+            sd.play(audio_data, samplerate=samplerate, device=device_name)
+
+            logger.info("Audio playback finished.")
+        except Exception as e:
+            logger.error(f"Error during audio playback: {e}")
 
 
 class Command(BaseCommand):
@@ -109,16 +120,12 @@ class Command(BaseCommand):
         logger.info("Starting audio streaming")
         with_link = options["with_link"]
 
-        while True:
-            audio = load_random_audio()
-            if audio is None:
-                logger.info("No more audio files to play. Exiting.")
-                break
-
-            logger.info("Playing selected audio")
-            if with_link:
-                asyncio.run(
-                    stream_audio_with_link(audio.set_channels(2).set_frame_rate(44100))
-                )
-            else:
+        if with_link:
+            asyncio.run(stream_audio_with_link())
+        else:
+            while True:
+                audio = load_random_audio()
+                if audio is None:
+                    logger.info("No more audio files to play. Exiting.")
+                    break
                 stream_audio(audio.set_channels(2).set_frame_rate(44100))

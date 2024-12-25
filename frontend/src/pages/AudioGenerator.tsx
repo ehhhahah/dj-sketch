@@ -69,28 +69,26 @@ const AudioGenerator: React.FC<AudioGeneratorProps> = ({ getList }) => {
         initial={{ height: 0, opacity: 0 }}
         animate={{ height: expanded ? 'auto' : 0, opacity: expanded ? 1 : 0 }}
         transition={{ duration: 0.8, ease: 'easeInOut' }}
-        className='overflow-hidden'>
-        <div className='space-y-4'>
-          <div className='space-y-4'>
-            <AudioSettingsForm
-              selectedNote={selectedNote}
-              setSelectedNote={setSelectedNote}
-              selectedOctave={selectedOctave}
-              setSelectedOctave={setSelectedOctave}
-              selectedDuration={selectedDuration}
-              setSelectedDuration={setSelectedDuration}
-            />
-            <button onClick={generateAudio} disabled={processing} className='button-full'>
-              {processing ? 'Processing...' : 'Generate Audio'}
-            </button>
-            {audioUrl && (
-              <div className='card'>
-                <audio controls src={audioUrl} className='audio' />
-              </div>
-            )}
+        className='expanded-parent'>
+        <div className='expanded-content'>
+          <AudioSettingsForm
+            selectedNote={selectedNote}
+            setSelectedNote={setSelectedNote}
+            selectedOctave={selectedOctave}
+            setSelectedOctave={setSelectedOctave}
+            selectedDuration={selectedDuration}
+            setSelectedDuration={setSelectedDuration}
+          />
+          <button onClick={generateAudio} disabled={processing} className='button-full'>
+            {processing ? 'Processing...' : 'Generate Audio'}
+          </button>
+          {audioUrl && (
+            <div className='card'>
+              <audio controls src={audioUrl} className='audio' />
+            </div>
+          )}
 
-            <ServerButton title='Upload Audio' onClick={handleUpload} processing={processing || !audioBlob} />
-          </div>
+          <ServerButton title='Upload Audio' onClick={handleUpload} processing={processing || !audioBlob} />
         </div>
       </motion.div>
     </div>

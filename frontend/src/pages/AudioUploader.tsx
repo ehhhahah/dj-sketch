@@ -40,31 +40,27 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ getList }) => {
         initial={{ height: 0, opacity: 0 }}
         animate={{ height: expanded ? 'auto' : 0, opacity: expanded ? 1 : 0 }}
         transition={{ duration: 0.8, ease: 'easeInOut' }}
-        className='overflow-hidden'>
-        <div className='space-y-4'>
-          <div>
-            <div className='space-y-4'>
-              <div className='card text-center'>
-                <input type='file' accept='audio/*' onChange={handleFileUpload} className='hidden' id='audio-upload' />
-                <label htmlFor='audio-upload' className='flex flex-col items-center cursor-pointer text-muted'>
-                  <motion.div animate={{ y: file ? [] : [0, -10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-                    <Upload className='w-12 h-12' />
-                  </motion.div>
-                  <span className='mt-2 text-sm'>{file ? file.name : 'Upload your audio file'}</span>
-                </label>
-              </div>
-
-              <ServerButton title='Upload audio' onClick={handleUpload} processing={!file || processing} />
-            </div>
-
-            {result &&
-              toast.success(
-                <div className='flex items-center'>
-                  <Music className='w-6 h-6 mr-2' />
-                  <span>Audio uploaded successfully!</span>
-                </div>
-              )}
+        className='expanded-parent'>
+        <div className='expanded-content'>
+          <div className='card text-center'>
+            <input type='file' accept='audio/*' onChange={handleFileUpload} className='hidden' id='audio-upload' />
+            <label htmlFor='audio-upload' className='flex flex-col items-center cursor-pointer text-muted'>
+              <motion.div animate={{ y: file ? [] : [0, -10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+                <Upload className='w-12 h-12' />
+              </motion.div>
+              <span className='mt-2 text-sm'>{file ? file.name : 'Upload your audio file'}</span>
+            </label>
           </div>
+
+          <ServerButton title='Upload audio' onClick={handleUpload} processing={!file || processing} />
+
+          {result &&
+            toast.success(
+              <div className='flex items-center'>
+                <Music className='w-6 h-6 mr-2' />
+                <span>Audio uploaded successfully!</span>
+              </div>
+            )}
         </div>
       </motion.div>
     </div>
