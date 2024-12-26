@@ -33,17 +33,58 @@ export interface AudioSettingsFormProps {
   setSelectedDuration: (duration: string) => void
 }
 
+export interface ManipulateProps {
+  id: number
+  isOpen: boolean
+  onRequestClose: () => void
+  getList: () => void
+}
+
+export interface GenADSRSettings {
+  attack: number
+  decay: number
+  sustain: number
+  release: number
+}
+
+export interface GenOscillatorSettings {
+  type: 'sine' | 'square' | 'sawtooth' | 'triangle'
+  detune: number
+  volume: number
+}
+
+export interface GenFilterSettings {
+  frequency: number
+  type: 'lowpass' | 'highpass' | 'bandpass'
+  Q: number
+}
+
+export interface GenSynthSettings {
+  adsr: GenADSRSettings
+  oscillator: GenOscillatorSettings
+  filter: GenFilterSettings
+}
+
+export interface GenAudioSettings {
+  note: string
+  octave: number
+  duration: string
+}
+
+// UI
+
 export interface ServerButtonProps {
   title: string
   onClick: () => void
   processing: boolean
 }
 
-export interface ManipulateProps {
-  id: number
-  isOpen: boolean
-  onRequestClose: () => void
-  getList: () => void
+export interface SliderProps {
+  value: number[]
+  onValueChange: (value: number[]) => void
+  min: number
+  max: number
+  step: number
 }
 
 // utils

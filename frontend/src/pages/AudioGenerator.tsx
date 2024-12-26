@@ -1,47 +1,41 @@
 import React, { useState } from 'react'
-import * as Tone from 'tone'
 import { toast } from 'sonner'
-import { AudioGeneratorProps } from '../types'
-import WavEncoder from 'wav-encoder'
 import { MdExpandMore, MdExpandLess } from 'react-icons/md'
 import { motion } from 'framer-motion'
-import AudioSettingsForm from '../components/AudioSettingsForm'
-import ServerButton from '../components/ServerButton'
+import AudioSettingsForm from '../components/audioGen/AudioSettingsForm'
+import EnvelopeControls from '../components/audioGen/EnvelopeControls'
+import OscillatorControls from '../components/audioGen/OscillatorControls'
+import FilterControls from '../components/audioGen/FilterControls'
+import ServerButton from '../components/ui/ServerButton'
+import { useSynthEngine } from '../hooks/useSynthEngine'
 import { uploadAudio } from '../utils/uploadAudio'
 
+const defaultSynthSettings: SynthSettings = {
+  adsr: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 0.1 },
+  oscillator: { type: 'sine', detune: 0, volume: -12 },
+  filter: { frequency: 2000, type: 'lowpass', Q: 1 }
+}
+
 const AudioGenerator: React.FC<AudioGeneratorProps> = ({ getList }) => {
-  const [expanded, setExpanded] = useState<boolean>(false)
+  const [expanded, setExpanded] = useState(false)
   const [processing, setProcessing] = useState(false)
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null)
-  const [audioUrl, setAudioUrl] = useState<string | null>(null)
-  const [selectedNote, setSelectedNote] = useState('C')
-  const [selectedOctave, setSelectedOctave] = useState(4)
-  const [selectedDuration, setSelectedDuration] = useState('8n')
+  const [audioSettings, setAudioSettings] = useState<AudioSettings>({
+    note: 'C',
+    octave: 4,
+    duration: '8n'
+  })
+  const [synthSettings, setSynthSettings] = useState<SynthSettings>(defaultSynthSettings)
 
-  const generateAudio = async () => {
+  const { audioBlob, audioUrl, generateAudio } = useSynthEngine()
+
+  const handleGenerate = async () => {
     setProcessing(true)
-
-    // Render the audio to a buffer
-    const buffer = await Tone.Offline(() => {
-      const synth = new Tone.Synth().toDestination()
-      synth.triggerAttackRelease(selectedNote + selectedOctave, selectedDuration, 0)
-    }, 1)
-
-    // Encode the buffer to a WAV file
-    const audioBuffer = buffer.get()
-    // @ts-ignore
-    const wavData = await WavEncoder.encode({
-      sampleRate: audioBuffer?.sampleRate,
-      channelData: [audioBuffer?.getChannelData(0)]
-    })
-    const audioBlob = new Blob([wavData], { type: 'audio/wav' })
-    setAudioBlob(audioBlob)
-
-    // Create a URL for the audio Blob
-    const audioUrl = URL.createObjectURL(audioBlob)
-    setAudioUrl(audioUrl)
-
-    toast.success('Audio generated successfully!')
+    try {
+      await generateAudio(audioSettings, synthSettings)
+      toast.success('Audio generated successfully!')
+    } catch (error) {
+      toast.error('Failed to generate audio')
+    }
     setProcessing(false)
   }
 
@@ -52,8 +46,13 @@ const AudioGenerator: React.FC<AudioGeneratorProps> = ({ getList }) => {
     }
 
     setProcessing(true)
-    const audioName = 'generated' + selectedNote + selectedOctave + '_' + selectedDuration
-    await uploadAudio({ file: audioBlob, style: 'generated', fileName: audioName, getList })
+    const audioName = `generated_${audioSettings.note}${audioSettings.octave}_${audioSettings.duration}`
+    try {
+      await uploadAudio({ file: audioBlob, style: 'generated', fileName: audioName, getList })
+      toast.success('Audio uploaded successfully!')
+    } catch (error) {
+      toast.error('Failed to upload audio')
+    }
     setProcessing(false)
   }
 
@@ -65,30 +64,33 @@ const AudioGenerator: React.FC<AudioGeneratorProps> = ({ getList }) => {
         </h1>
         <button className='text-lg'>{expanded ? <MdExpandLess /> : <MdExpandMore />}</button>
       </div>
+
       <motion.div
         initial={{ height: 0, opacity: 0 }}
         animate={{ height: expanded ? 'auto' : 0, opacity: expanded ? 1 : 0 }}
         transition={{ duration: 0.8, ease: 'easeInOut' }}
         className='expanded-parent'>
-        <div className='expanded-content'>
+        <div className='expanded-content space-y-6'>
           <AudioSettingsForm
-            selectedNote={selectedNote}
-            setSelectedNote={setSelectedNote}
-            selectedOctave={selectedOctave}
-            setSelectedOctave={setSelectedOctave}
-            selectedDuration={selectedDuration}
-            setSelectedDuration={setSelectedDuration}
+            audioSettings={audioSettings}
+            synthSettings={synthSettings}
+            onAudioSettingsChange={setAudioSettings}
+            onSynthSettingsChange={setSynthSettings}
           />
-          <button onClick={generateAudio} disabled={processing} className='button-full'>
-            {processing ? 'Processing...' : 'Generate Audio'}
-          </button>
-          {audioUrl && (
-            <div className='card'>
-              <audio controls src={audioUrl} className='audio' />
-            </div>
-          )}
 
-          <ServerButton title='Upload Audio' onClick={handleUpload} processing={processing || !audioBlob} />
+          <div className='space-y-4'>
+            <button onClick={handleGenerate} disabled={processing} className='button-full'>
+              {processing ? 'Processing...' : 'Generate Audio'}
+            </button>
+
+            {audioUrl && (
+              <div className='card'>
+                <audio controls src={audioUrl} className='audio' />
+              </div>
+            )}
+
+            <ServerButton title='Upload Audio' onClick={handleUpload} processing={processing || !audioBlob} />
+          </div>
         </div>
       </motion.div>
     </div>

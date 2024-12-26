@@ -34,7 +34,7 @@ const DetailsTable: React.FC<DetailsTableProps> = ({ item }) => {
                   {value}
                 </a>
               ) : (
-                relativeDate(value)
+                relativeDate(value, key)
               )}
             </td>
           ))}

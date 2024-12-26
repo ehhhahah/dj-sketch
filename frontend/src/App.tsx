@@ -7,7 +7,7 @@ import AudioGenerator from './pages/AudioGenerator'
 import { AudioUploadSchema } from '../../constants/serverSchemas'
 import AudioRecorder from './pages/Microphone'
 import DisplayNodes from './pages/DisplayNodes'
-
+import mockedResponse from './mocks/m_uploads.json'
 import './stylees/divider.css'
 
 function App() {
@@ -24,6 +24,7 @@ function App() {
       setUploads(response.data)
     } catch (error) {
       toast.error('Error fetching the list of uploads', error)
+      setUploads(mockedResponse)
     }
   }, [])
 
@@ -65,6 +66,14 @@ function App() {
   return (
     <div className='flex flex-col md:flex-row h-screen'>
       <Toaster position='top-right' />
+      <div className='theme-toggler'>
+        <button onClick={() => document.documentElement.classList.toggle('dark')} className='text-white'>
+          Toggle theme
+        </button>
+      </div>
+      <div className='credits' onClick={() => window.open('https://linktr.ee/ehhhahah')}>
+        <button>© ehh hahah</button>
+      </div>
       <div className='overflow-y-auto' style={{ height: isMd ? '100%' : dividerY, width: isMd ? dividerX : '100%' }}>
         <AudioRecorder getList={getList} />
         <AudioUploader getList={getList} />

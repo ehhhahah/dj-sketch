@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import React from 'react'
-import { ServerButtonProps } from '../types'
+import { ServerButtonProps } from '../../types'
 
 const ServerButton: React.FC<ServerButtonProps> = ({ title, onClick, processing }) => {
   // This component is a button that can be disabled and that sends data to server

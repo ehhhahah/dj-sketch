@@ -6,7 +6,7 @@ import {
   AUDIO_MANIPULATION_TYPES,
   AudioManipulationParameters
 } from '../../../constants/audioManipulationTypes'
-import ServerButton from './ServerButton'
+import ServerButton from './ui/ServerButton'
 import BaseModal from './BaseModal'
 import { ManipulateProps } from '../types'
 import { AudioManipulationSchema } from '../../../constants/serverSchemas'

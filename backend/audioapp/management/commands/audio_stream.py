@@ -10,7 +10,7 @@ from django.core.management.base import BaseCommand
 from pydub import AudioSegment
 from aalink import Link  # pylint: disable=import-error disable=no-name-in-module
 import sounddevice as sd  # pylint: disable=import-error
-import numpy as nps
+import numpy as np
 
 # from django_redis import get_redis_connection
 from audioapp.models import AudioFile, PlayHistory

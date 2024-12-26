@@ -1,0 +1,50 @@
+[
+    {
+        "id": 62,
+        "file": "http://127.0.0.1:8000/uploads/generatedC4_8n.wav",
+        "title": "",
+        "style": "generated",
+        "created_at": "2024-12-25T09:51:06.329006Z",
+        "made_from": null
+    },
+    {
+        "id": 63,
+        "file": "http://127.0.0.1:8000/uploads/generatedA4_8n.wav",
+        "title": "",
+        "style": "generated",
+        "created_at": "2024-12-25T09:51:17.658615Z",
+        "made_from": null
+    },
+    {
+        "id": 66,
+        "file": "http://127.0.0.1:8000/uploads/processed_1552fb88.wav",
+        "title": "",
+        "style": "spectral_freeze",
+        "created_at": "2024-12-25T10:56:31.193231Z",
+        "made_from": 62
+    },
+    {
+        "id": 67,
+        "file": "http://127.0.0.1:8000/uploads/generatedC4_8n_1q34jBV.wav",
+        "title": "",
+        "style": "generated",
+        "created_at": "2024-12-25T17:17:33.678735Z",
+        "made_from": null
+    },
+    {
+        "id": 68,
+        "file": "http://127.0.0.1:8000/uploads/uploaded.wav",
+        "title": "",
+        "style": "recorded",
+        "created_at": "2024-12-25T23:54:27.301800Z",
+        "made_from": null
+    },
+    {
+        "id": 69,
+        "file": "http://127.0.0.1:8000/uploads/processed_686672a4.wav",
+        "title": "",
+        "style": "pitch_shift",
+        "created_at": "2024-12-25T23:54:55.601418Z",
+        "made_from": 68
+    }
+]

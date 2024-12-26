@@ -62,6 +62,22 @@ body {
   @apply border-zinc-800 dark:border-zinc-800;
 }
 
+.card-tab {
+  @apply flex flex-wrap mb-6;
+}
+
+.card-tab > button {
+  @apply px-4 py-2 capitalize text-zinc-200 cursor-pointer;
+}
+
+.card-tab > button.active {
+  @apply bg-zinc-300 text-zinc-900 font-serif italic;
+}
+
+.setting-label {
+  @apply text-sm font-light block text-sm mb-1;
+}
+
 .button-primary {
   @apply bg-zinc-500 hover:bg-zinc-600 text-white font-bold py-2 px-4 rounded;
   @apply dark:bg-zinc-400 dark:hover:bg-zinc-500;
@@ -143,4 +159,12 @@ body {
 
 .stop {
   @apply bg-red-950 hover:bg-red-900;
+}
+
+.theme-toggler {
+  @apply fixed bottom-4 right-4 z-50;
+}
+
+.credits {
+  @apply fixed bottom-4 left-4 z-50 text-zinc-50;
 }

@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 import { AudioUploaderProps } from '../types'
 import { MdExpandMore, MdExpandLess } from 'react-icons/md'
 import { motion } from 'framer-motion'
-import ServerButton from '../components/ServerButton'
+import ServerButton from '../components/ui/ServerButton'
 import { uploadAudio } from '../utils/uploadAudio'
 
 interface AudioRecorderState {
