@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { GraphCanvas, darkTheme } from 'reagraph'
+import { GraphCanvas, darkTheme, lightTheme } from 'reagraph'
 import { AudioUploadSchema } from '../../../constants/serverSchemas'
 import { MdExpandMore, MdExpandLess } from 'react-icons/md'
 import { motion } from 'framer-motion'
@@ -40,6 +40,28 @@ const DisplayNodes: React.FC<DisplayNodesProps> = ({ uploads }) => {
       label: `${upload.made_from}-${upload.id}`
     }))
 
+  const theTheme = document.documentElement.classList.contains('dark')
+    ? {
+        ...darkTheme,
+        canvas: {
+          ...darkTheme.canvas,
+          background: '#222'
+        },
+        node: {
+          ...darkTheme.node,
+          fill: '#000'
+        }
+      }
+    : {
+        ...lightTheme,
+        canvas: {
+          ...lightTheme.canvas
+        },
+        node: {
+          ...lightTheme.node
+        }
+      }
+
   return (
     <div className='container'>
       <div className='menu-header' onClick={() => setExpanded(!expanded)}>
@@ -58,17 +80,7 @@ const DisplayNodes: React.FC<DisplayNodesProps> = ({ uploads }) => {
             nodes={nodes}
             edges={edges}
             selections={currentFile ? [currentFile.toString()] : []}
-            theme={{
-              ...darkTheme,
-              canvas: {
-                ...darkTheme.canvas,
-                background: '#222'
-              },
-              node: {
-                ...darkTheme.node,
-                fill: '#000'
-              }
-            }}
+            theme={theTheme}
           />
         </div>
       </motion.div>

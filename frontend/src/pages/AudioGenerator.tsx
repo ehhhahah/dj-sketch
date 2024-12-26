@@ -3,12 +3,10 @@ import { toast } from 'sonner'
 import { MdExpandMore, MdExpandLess } from 'react-icons/md'
 import { motion } from 'framer-motion'
 import AudioSettingsForm from '../components/audioGen/AudioSettingsForm'
-import EnvelopeControls from '../components/audioGen/EnvelopeControls'
-import OscillatorControls from '../components/audioGen/OscillatorControls'
-import FilterControls from '../components/audioGen/FilterControls'
 import ServerButton from '../components/ui/ServerButton'
 import { useSynthEngine } from '../hooks/useSynthEngine'
 import { uploadAudio } from '../utils/uploadAudio'
+import { AudioGeneratorProps, GenAudioSettings as AudioSettings, GenSynthSettings as SynthSettings } from '../types'
 
 const defaultSynthSettings: SynthSettings = {
   adsr: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 0.1 },
@@ -76,13 +74,10 @@ const AudioGenerator: React.FC<AudioGeneratorProps> = ({ getList }) => {
             synthSettings={synthSettings}
             onAudioSettingsChange={setAudioSettings}
             onSynthSettingsChange={setSynthSettings}
+            generateAudio={handleGenerate}
           />
 
           <div className='space-y-4'>
-            <button onClick={handleGenerate} disabled={processing} className='button-full'>
-              {processing ? 'Processing...' : 'Generate Audio'}
-            </button>
-
             {audioUrl && (
               <div className='card'>
                 <audio controls src={audioUrl} className='audio' />

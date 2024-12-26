@@ -1,10 +1,17 @@
 import React, { useState } from 'react'
+import { GiPerspectiveDiceSixFacesRandom } from 'react-icons/gi'
 
 const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 const octaves = Array.from({ length: 8 }, (_, i) => i)
 const durations = ['32n', '16n', '8n', '4n', '2n', '1n']
 
-const AudioSettingsForm = ({ audioSettings, synthSettings, onAudioSettingsChange, onSynthSettingsChange }) => {
+const AudioSettingsForm = ({
+  audioSettings,
+  synthSettings,
+  onAudioSettingsChange,
+  onSynthSettingsChange,
+  generateAudio
+}) => {
   const [activeTab, setActiveTab] = useState('basic')
 
   const handleEnvelopeChange = (key, value) => {
@@ -12,6 +19,7 @@ const AudioSettingsForm = ({ audioSettings, synthSettings, onAudioSettingsChange
       ...synthSettings,
       adsr: { ...synthSettings.adsr, [key]: value }
     })
+    generateAudio()
   }
 
   const handleOscillatorChange = (key, value) => {
@@ -19,6 +27,7 @@ const AudioSettingsForm = ({ audioSettings, synthSettings, onAudioSettingsChange
       ...synthSettings,
       oscillator: { ...synthSettings.oscillator, [key]: value }
     })
+    generateAudio()
   }
 
   const handleFilterChange = (key, value) => {
@@ -26,6 +35,35 @@ const AudioSettingsForm = ({ audioSettings, synthSettings, onAudioSettingsChange
       ...synthSettings,
       filter: { ...synthSettings.filter, [key]: value }
     })
+    generateAudio()
+  }
+
+  const randomizeParameters = () => {
+    const randomValue = (min, max) => Math.random() * (max - min) + min
+    const randomChoice = (array) => array[Math.floor(Math.random() * array.length)]
+
+    const randomizedSettings = {
+      adsr: {
+        attack: randomValue(0, 1),
+        decay: randomValue(0, 1),
+        sustain: randomValue(0, 1),
+        release: randomValue(0, 1)
+      },
+      oscillator: {
+        ...synthSettings.oscillator,
+        type: randomChoice(['sine', 'square', 'triangle', 'sawtooth']),
+        frequency: parseInt(randomValue(20, 20000))
+      },
+      filter: {
+        ...synthSettings.filter,
+        type: randomChoice(['lowpass', 'highpass', 'bandpass']),
+        frequency: parseInt(randomValue(20, 20000)),
+        Q: randomValue(0.1, 18)
+      }
+    }
+
+    onSynthSettingsChange(randomizedSettings)
+    generateAudio()
   }
 
   return (
@@ -37,6 +75,9 @@ const AudioSettingsForm = ({ audioSettings, synthSettings, onAudioSettingsChange
             {tab}
           </button>
         ))}
+        <button onClick={randomizeParameters} className='randomize'>
+          <GiPerspectiveDiceSixFacesRandom />
+        </button>
       </div>
 
       {/* Basic Settings */}
@@ -82,6 +123,9 @@ const AudioSettingsForm = ({ audioSettings, synthSettings, onAudioSettingsChange
             ))}
           </select>
         </div>
+        <button onClick={generateAudio} className='button-full'>
+          Generate Audio
+        </button>
       </div>
 
       {/* Envelope Controls */}
@@ -97,9 +141,9 @@ const AudioSettingsForm = ({ audioSettings, synthSettings, onAudioSettingsChange
                 step={0.01}
                 value={value}
                 onChange={(e) => handleEnvelopeChange(key, parseFloat(e.target.value))}
-                className='w-full'
+                className='range-input'
               />
-              <span className='text-sm text-gray-500 w-12 text-right'>{value.toFixed(2)}</span>
+              <span className='range-label'>{value.toFixed(2)}</span>
             </div>
           </div>
         ))}
@@ -130,9 +174,9 @@ const AudioSettingsForm = ({ audioSettings, synthSettings, onAudioSettingsChange
               max={100}
               value={synthSettings.oscillator.detune}
               onChange={(e) => handleOscillatorChange('detune', parseFloat(e.target.value))}
-              className='w-full'
+              className='range-input'
             />
-            <span className='text-sm text-gray-500 w-16 text-right'>{synthSettings.oscillator.detune} cents</span>
+            <span className='range-label'>{synthSettings.oscillator.detune} cents</span>
           </div>
         </div>
 
@@ -145,9 +189,9 @@ const AudioSettingsForm = ({ audioSettings, synthSettings, onAudioSettingsChange
               max={0}
               value={synthSettings.oscillator.volume}
               onChange={(e) => handleOscillatorChange('volume', parseFloat(e.target.value))}
-              className='w-full'
+              className='range-input'
             />
-            <span className='text-sm text-gray-500 w-16 text-right'>{synthSettings.oscillator.volume} dB</span>
+            <span className='range-label'>{synthSettings.oscillator.volume} dB</span>
           </div>
         </div>
       </div>
@@ -176,10 +220,10 @@ const AudioSettingsForm = ({ audioSettings, synthSettings, onAudioSettingsChange
               min={20}
               max={20000}
               value={synthSettings.filter.frequency}
-              onChange={(e) => handleFilterChange('frequency', parseFloat(e.target.value))}
-              className='w-full'
+              onChange={(e) => handleFilterChange('frequency', parseInt(e.target.value))}
+              className='range-input'
             />
-            <span className='text-sm text-gray-500 w-20 text-right'>{synthSettings.filter.frequency} Hz</span>
+            <span className='range-label'>{synthSettings.filter.frequency} Hz</span>
           </div>
         </div>
 
@@ -193,9 +237,9 @@ const AudioSettingsForm = ({ audioSettings, synthSettings, onAudioSettingsChange
               step={0.1}
               value={synthSettings.filter.Q}
               onChange={(e) => handleFilterChange('Q', parseFloat(e.target.value))}
-              className='w-full'
+              className='range-input'
             />
-            <span className='text-sm text-gray-500 w-16 text-right'>{synthSettings.filter.Q.toFixed(1)}</span>
+            <span className='range-label'>{synthSettings.filter.Q.toFixed(1)}</span>
           </div>
         </div>
       </div>
